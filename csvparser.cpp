@@ -1,5 +1,9 @@
 #include "csvparser.hpp"
 
+/*
+	useful functions
+*/
+
 bool check_conversion(const string& cell) {
 	/*
 		Returns true if a full string is convertible to double
@@ -20,10 +24,9 @@ void print_vector(const vector<string>& vect) {
 	cout << endl;
 }
 
+
+
 CSVParser::CSVParser(const string& input_file) : input_file(input_file)  {}
-
-
-
 
 void CSVParser::read() {
 	/* 
@@ -95,47 +98,17 @@ variant<string, optional<double>> CSVParser::operator()(const int row, const int
 	variant<vector<string>, vector<optional<double>>> column = dataset[col];
 	variant<string, optional<double>> result;
 	try {
-		string result = get<vector<string>>(column)[row];
+		result = get<vector<string>>(column)[row];
 	} catch (bad_variant_access& e) {
-		optional<double> result = get<vector<optional<double>>>(column)[row];
+		cout << "gotcha" << endl;
+		result = get<vector<optional<double>>>(column)[row];
 	}
 	return result;
 }
+
+
+
 /*
-
-   	if (!columns_allocated) {
-    	while (getline(lineStream, cell, ',')) {
-				// fill header
-				header.push_back(cell);
-
-				//detect type
-      	try {
-        	double value = stod(cell); // try to convert to double
-          dataset.push_back(vector<double>{value});
-        } catch (invalid_argument&) {
-        	dataset.push_back(vector<string>{cell}); // if conversion fails, it's a string
-        }
-      }
-      columns_allocated = true;
-    }
-
-
-     int counter = 0; // col index counter
-     while (getline(lineStream, cell, ',')) {
-       if (holds_alternative<vector<string>>(dataset[counter])) {
-         get<vector<string>>(dataset[counter]).push_back(cell);
-       } else if (std::holds_alternative<std::vector<double>>(dataset[counter])) {
-         double value = std::stod(cell);
-         std::get<std::vector<double>>(dataset[counter]).push_back(value);
-       }
-       ++counter;
-		 
-   }
-
- }
-
- 
-
 void CSVParser::print() {
 
     std::cout<<"col"<<dataset.size();
@@ -156,8 +129,7 @@ void CSVParser::print() {
      for (const auto& cell : double_column) {
        std::cout << cell << " ";
      }
-     std::cout << "\n";
-   }
+
  }
 }/
 */

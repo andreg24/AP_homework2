@@ -18,7 +18,7 @@ public:
 	// parser function
 	void read();
 
-	variant<string, optional<double>> operator()(const int row, const int col) const;
+	variant<string, optional<double>> operator()(const int row, const int col);
 
 	// prints the dataset by columns
 	//void print();

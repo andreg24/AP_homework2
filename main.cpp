@@ -9,4 +9,8 @@ int main() {
 	cout << x.size() << endl;;
 	vector<optional<double>> y = get<vector<optional<double>>>(x[1]);
 	cout << y[4].value() << endl;
+	cout << "-----" << endl;
+	variant<string, optional<double>> a = A(4,1);
+  optional<double> b = get<optional<double>>(a);
+	cout << b.value() << endl;
 }
