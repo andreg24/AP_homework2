@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <variant>
+#include <optional>
 #include <vector>
 
 using namespace std;
@@ -16,11 +17,10 @@ public:
 	void read();
 
 	// prints the dataset by columns
-	void print();
+	//void print();
 
 private:
 	string input_file;
-	usigned int cols_num;
-	vector<variant<vector<string>, vector<double>>> dataset;
+	vector<variant<vector<string>, vector<optional<double>>>> dataset;
 	vector<string> header;
 };
