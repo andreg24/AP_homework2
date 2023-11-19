@@ -1,23 +1,16 @@
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <variant>
-#include <vector>
+// CSVParser class
 
-using namespace std;
+CSVParser::CSVParser(string& input_file) : input_file(input_file)  { read(); }
 
-using namespace std;
- 
-class CSVParser {
-public:
- // Constructor
- // Parser function
 
- void read() {
+void CSVParser::read() {
+	/* 
+		Reads the CSV file and stores the result in dataset
+	*/
+
    ifstream file(input_file);
-	 string line;
-	 bool columns_allocated = false; // checks if 
+	 string line; //???
+	 bool columns_allocated = false; // checks if columns vector have been allocated in dataset
 
    while (getline(file, line)) {
 		 stringstream lineStream(line);
@@ -53,7 +46,7 @@ public:
 
  
 
-void print() {
+void CSVParser::print() {
 
     std::cout<<"col"<<dataset.size();
 
@@ -76,7 +69,4 @@ void print() {
      std::cout << "\n";
    }
  }
-
- 
-
 }
