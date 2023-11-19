@@ -15,9 +15,12 @@ public:
 	// parser function
 	void read();
 
-	void print_columns();
+	// prints the dataset by columns
+	void print();
 
 private:
 	string input_file;
+	usigned int cols_num;
 	vector<variant<vector<string>, vector<double>>> dataset;
-}
+	vector<string> header;
+};

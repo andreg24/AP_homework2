@@ -1,6 +1,6 @@
 #include "csvparser.hpp"
 
 int main() {
-	CSVParser A("top_english_movies.csv");
+	CSVParser A("csv_examples/top_english_movies.csv");
 	A.print();
 }

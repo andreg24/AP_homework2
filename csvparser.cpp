@@ -1,32 +1,45 @@
 #include "csvparser.hpp"
 
-CSVParser::CSVParser(string& input_file) : input_file(input_file)  { read(); }
+optional<double> is_convertible(const string& cell) {
+	/*
+		Returns true if a full string is convertible to double
+	*/
+	
+	option<double> result;
+	size_t n;
+	double converted = stod(cell, &n);
+	if ( n == cell.size() ) { result = converted; }
+	
+	return result;
+}
+
+CSVParser::CSVParser(const string& input_file) : input_file(input_file)  { read(); }
 
 
 void CSVParser::read() {
 	/* 
 		Reads the CSV file and stores the result in dataset
 	*/
+	ifstream file(input_file);
+	string line; //???
+	bool columns_allocated = false; // checks if columns vector have been allocated in dataset
 
-   ifstream file(input_file);
-	 string line; //???
-	 bool columns_allocated = false; // checks if columns vector have been allocated in dataset
+  while (getline(file, line)) {
+		stringstream lineStream(line);
+    string cell;
 
-   while (getline(file, line)) {
-		 stringstream lineStream(line);
-     string cell;
-
-     if (!columns_allocated) {
-       while (getline(lineStream, cell, ',')) {
-         try {
-           double value = stod(cell); // try to convert to double
-           dataset.push_back(svector<double>{value});
-         } catch (invalid_argument&) {
-           dataset.push_back(vector<string>{cell}); // if conversion fails, it's a string
-         }
-       }
-       columns_allocated = true;
-     }
+   	if (!columns_allocated) {
+    	while (getline(lineStream, cell, ',')) {
+			
+      	try {
+        	double value = stod(cell); // try to convert to double
+          dataset.push_back(vector<double>{value});
+        } catch (invalid_argument&) {
+        	dataset.push_back(vector<string>{cell}); // if conversion fails, it's a string
+        }
+      }
+      columns_allocated = true;
+    }
 
 
      int counter = 0; // col index counter
