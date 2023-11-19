@@ -89,6 +89,18 @@ void CSVParser::read() {
 		}
 	}
 }
+
+
+variant<string, optional<double>> CSVParser::operator()(const int row, const int col) {
+	variant<vector<string>, vector<optional<double>>> column = dataset[col];
+	variant<string, optional<double>> result;
+	try {
+		string result = get<vector<string>>(column)[row];
+	} catch (bad_variant_access& e) {
+		optional<double> result = get<vector<optional<double>>>(column)[row];
+	}
+	return result;
+}
 /*
 
    	if (!columns_allocated) {

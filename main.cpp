@@ -5,5 +5,8 @@ int main() {
 
 	CSVParser A("csv_examples/prove.csv");
 	A.read();
-	//A.print();
+	vector<variant<vector<string>, vector<optional<double>>>> x = A.getDataset();
+	cout << x.size() << endl;;
+	vector<optional<double>> y = get<vector<optional<double>>>(x[1]);
+	cout << y[4].value() << endl;
 }
