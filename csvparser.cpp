@@ -12,7 +12,17 @@ bool check_conversion(const string& cell) {
 	else { return false; }
 }
 
-CSVParser::CSVParser(const string& input_file) : input_file(input_file)  { read(); }
+
+void print_vector(const vector<string>& vect) {
+	for (unsigned int i=0; i<vect.size(); ++i) {
+		cout << vect[i] << ", ";
+	}
+	cout << endl;
+}
+
+CSVParser::CSVParser(const string& input_file) : input_file(input_file)  {}
+
+
 
 
 void CSVParser::read() {
@@ -33,9 +43,9 @@ void CSVParser::read() {
 		if (line_counter == 0) {
     	while (getline(lineStream, cell, ',')) {
 				header.push_back(cell);
-				++line_counter;
 				//--- should we raise an error if a column name is missing??? ---
 			}
+			++line_counter;
 		// second line -> detect type and allocate columns
 		} else if (line_counter == 1) {
 			while (getline(lineStream, cell, ',')) {
@@ -51,11 +61,12 @@ void CSVParser::read() {
 					temp.push_back(cell);
 					dataset.push_back(temp);
 				}
-				++line_counter;
 			}
+			++line_counter;
 		} else {
 			int counter = 0; // col index counter
 			while (getline(lineStream, cell, ',')) {
+				cout << cell.c_str() << endl;
 				// is a string column
 				if (holds_alternative<vector<string>>(dataset[counter])) {
 					get<vector<string>>(dataset[counter]).push_back(cell);
@@ -69,8 +80,11 @@ void CSVParser::read() {
 					} 
 					else {
 						// ---raise error because colum contains more than one type ---
+						optional<double> converted = 1000000.000;
+						get<vector<optional<double>>>(dataset[counter]).push_back(converted);
 					}
 				}
+				++ counter;
 			}
 		}
 	}
