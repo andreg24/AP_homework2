@@ -1,4 +1,4 @@
-// CSVParser class
+#include "csvparser.hpp"
 
 CSVParser::CSVParser(string& input_file) : input_file(input_file)  { read(); }
 
