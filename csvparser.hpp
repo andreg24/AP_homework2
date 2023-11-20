@@ -25,6 +25,6 @@ public:
 
 private:
 	string input_file;
-	vector<variant<vector<string>, vector<optional<double>>>> dataset;
+	vector<variant<vector<optional<string>>, vector<optional<double>>>> dataset;
 	vector<string> header;
 };

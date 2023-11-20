@@ -49,42 +49,50 @@ void CSVParser::read() {
 				//--- should we raise an error if a column name is missing??? ---
 			}
 			++line_counter;
+		} 
 		// second line -> detect type and allocate columns
-		} else if (line_counter == 1) {
+		else if (line_counter == 1) {
 			while (getline(lineStream, cell, ',')) {
 				// detect type
-				if ( check_conversion(cell) ) { 
-					optional<double> converted_value = stod(cell);
+				if (check_conversion(cell)) { 
+					optional<double> value = stod(cell);
 					vector<optional<double>> temp;
-					temp.push_back(converted_value);
+					temp.push_back(value);
 					dataset.push_back(temp); 
 				}
 				else {
-					vector<string> temp;
-					temp.push_back(cell);
+					optional<string> value = cell;
+					vector<optional<string>> temp;
+					temp.push_back(value);
 					dataset.push_back(temp);
 				}
 			}
 			++line_counter;
-		} else {
-			int counter = 0; // col index counter
+		} 
+		// all other lines
+		else {
+			int counter = 0; // columns index counter
 			while (getline(lineStream, cell, ',')) {
 				cout << cell.c_str() << endl;
 				// is a string column
 				if (holds_alternative<vector<string>>(dataset[counter])) {
-					get<vector<string>>(dataset[counter]).push_back(cell);
+					optional<string> value;
+					if (cell.size() > 0) { value = cell; }
+					get<vector<string>>(dataset[counter]).push_back(value);
 				}
 				// is a double column
 				else {
-					// check if convertible
+					// checks if convertible
+					optional<double> value;
 					if (check_conversion(cell)) {
-						optional<double> converted = stod(cell);
-						get<vector<optional<double>>>(dataset[counter]).push_back(converted);
-					} 
-					else {
-						// ---raise error because colum contains more than one type ---
-						optional<double> converted = 1000000.000;
-						get<vector<optional<double>>>(dataset[counter]).push_back(converted);
+						value = stod(cell);
+						get<vector<optional<double>>>(dataset[counter]).push_back(value);
+					} else {
+						if (cell.size() == 0) {	// is a missing value
+							get<vector<optional<double>>>(dataset[counter]).push_back(value);
+						} else {
+							throw bad_typeid("Brutto coglione hai messo delle stringhe nella colonna dei double");
+						}
 					}
 				}
 				++ counter;
@@ -108,7 +116,7 @@ variant<string, optional<double>> CSVParser::operator()(const int row, const int
 
 
 
-/*
+/*  DA AGGIORNARE
 void CSVParser::print() {
 
     std::cout<<"col"<<dataset.size();
