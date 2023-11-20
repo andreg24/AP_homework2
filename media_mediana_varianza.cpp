@@ -190,6 +190,10 @@ public:
         }
   }
 
+  double dev_std(size_t col_idx) {
+    return std::sqrt(var_col(col_idx));
+  }
+
 private:
   std::string input_file;
   std::vector<std::variant<std::vector<std::string>, std::vector<double>>> dataset;
@@ -207,7 +211,7 @@ int main() {
   
   A.read();
   //A.print();
-  std::cout<< "La media è: "<<A.mean_col(0)<< ". La varianza è: "<< A.var_col(0)<< ". La mediana è: "<< A.median_col(0)<<std::endl;
+  std::cout<< "La media è: "<<A.mean_col(0)<< ". La varianza è: "<< A.var_col(0)<< ". La mediana è: "<< A.median_col(0)<< ". La deviazione standard è: "<< A.dev_std(0)<<std::endl;
   
   return 0;
 }
