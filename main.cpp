@@ -1,9 +1,9 @@
 #include "csvparser.hpp"
 
 int main() {
-//	CSVParser A("csv_examples/top_english_movies.csv");
+	CSVParser A("csv_examples/top_english_movies100.csv");
 
-	CSVParser A("csv_examples/prove.csv");
+	//CSVParser A("csv_examples/prove.csv");
 	A.read();
 	vector<variant<vector<optional<string>>, vector<optional<double>>>> x = A.getDataset();
 	/*
