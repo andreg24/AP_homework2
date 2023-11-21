@@ -115,6 +115,88 @@ variant<optional<string>, optional<double>> CSVParser::operator()(const int row,
 }
 
 
+double CSVParser::mean_col(size_t col_idx){
+		if (col_idx >= dataset.size() || col_idx < 0) {
+            cerr << "Column index out of range." << endl;
+            return 0.0;}
+
+        if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
+            const auto& double_column = get<vector<optional<double>>>(dataset[col_idx]);
+            if (double_column.empty()) {
+                cerr << "Column is empty." << std::endl;
+                return 0.0;
+            }
+
+            boost::accumulators::accumulator_set<double, boost::accumulators::stats<boost::accumulators::tag::mean>> acc;
+            for (const auto& val : double_column) {
+                acc(val.value());
+            }
+			return boost::accumulators::mean(acc);
+       		} else {
+            cerr << "Column is not numeric." << std::endl;
+            return 0.0;
+        }
+
+        }
+
+
+  double CSVParser::var_col(size_t col_idx) {
+        if (col_idx >= dataset.size() || col_idx < 0) {
+            cerr << "Column index out of range." << endl;
+            return 0.0;
+        }
+
+        if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
+            const auto& double_column = std::get<std::vector<optional<double>>>(dataset[col_idx]);
+            if (double_column.empty()) {
+                cerr << "Column is empty." << endl;
+                return 0.0;
+            }
+
+            boost::accumulators::accumulator_set<double, boost::accumulators::stats<boost::accumulators::tag::variance>> acc;
+            for (const auto& val : double_column) {
+                acc(val.value());
+            }
+
+            return boost::accumulators::variance(acc);
+        } else {
+            cerr << "Column is not numeric." << endl;
+            return 0.0;
+        }
+  }
+
+double CSVParser::median_col(size_t col_idx) {
+        if (col_idx >= dataset.size() || col_idx < 0) {
+            std::cerr << "Column index out of range." << std::endl;
+            return 0.0;
+        }
+
+        if (std::holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
+            const auto& double_column = std::get<std::vector<optional<double>>>(dataset[col_idx]);
+            if (double_column.empty()) {
+                std::cerr << "Column is empty." << std::endl;
+                return 0.0;
+            }
+
+            accumulator_set<double, stats<tag::median(with_p_square_quantile)>> acc;
+            for (const auto& val : double_column) {
+                acc(val.value());
+            }
+
+            return median(acc);
+        } else {
+            std::cerr << "Column is not numeric." << std::endl;
+            return 0.0;
+        }
+  }
+
+
+double CSVParser::dev_std(size_t col_idx) {
+    return std::sqrt(var_col(col_idx));
+  }
+
+
+
 
 /*  DA AGGIORNARE
 void CSVParser::print() {
