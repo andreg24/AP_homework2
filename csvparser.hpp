@@ -35,8 +35,42 @@ public:
 	// prints the dataset by columns
 	//void print();
 
+
+	//iterator class
+	class ColIterator{
+	private:
+	const CSVParser& csvparser;
+	size_t col;
+
+	public:
+		ColIterator(const CSVParser& csvp, size_t size ) : csvparser(csvp), col(size){};
+
+		ColIterator& operator++(){
+			++col;
+			return *this;
+		}
+
+		bool operator!= ( const ColIterator& other) const{
+			return col != other.col;
+		}
+
+		const variant<vector<optional<string>>, vector<optional<double>>>& operator*() const{
+			return csvparser.dataset[col];
+		}
+	};
+
+	ColIterator begin() const{
+		return ColIterator(*this, 0);
+	}
+
+	ColIterator end() const{
+		return ColIterator(*this, dataset.size());
+	}
+
+
 private:
 	string input_file;
 	vector<variant<vector<optional<string>>, vector<optional<double>>>> dataset;
 	vector<string> header;
+	int size;
 };
