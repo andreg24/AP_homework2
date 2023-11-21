@@ -75,10 +75,10 @@ void CSVParser::read() {
 			while (getline(lineStream, cell, ',')) {
 				cout << cell.c_str() << endl;
 				// is a string column
-				if (holds_alternative<vector<string>>(dataset[counter])) {
+				if (holds_alternative<vector<optional<string>>>(dataset[counter])) {
 					optional<string> value;
 					if (cell.size() > 0) { value = cell; }
-					get<vector<string>>(dataset[counter]).push_back(value);
+					get<vector<optional<string>>>(dataset[counter]).push_back(value);
 				}
 				// is a double column
 				else {
@@ -91,7 +91,7 @@ void CSVParser::read() {
 						if (cell.size() == 0) {	// is a missing value
 							get<vector<optional<double>>>(dataset[counter]).push_back(value);
 						} else {
-							throw bad_typeid("Brutto coglione hai messo delle stringhe nella colonna dei double");
+							throw invalid_argument("Brutto coglione hai messo delle stringhe nella colonna dei double");
 						}
 					}
 				}

@@ -5,6 +5,7 @@
 #include <variant>
 #include <optional>
 #include <vector>
+#include <stdexcept>
 
 using namespace std;
  
@@ -13,12 +14,12 @@ public:
 	// Constructor
 	CSVParser(const string& input_file);
 
-	vector<variant<vector<string>, vector<optional<double>>>> getDataset() { return dataset; }
+	vector<variant<vector<optional<string>>, vector<optional<double>>>> getDataset() { return dataset; }
 
 	// parser function
 	void read();
 
-	variant<string, optional<double>> operator()(const int row, const int col);
+	variant<optional<string>, optional<double>> operator()(const int row, const int col);
 
 	// prints the dataset by columns
 	//void print();
