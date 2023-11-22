@@ -27,5 +27,8 @@ int main() {
   for (const auto& pair : freq ) {
     cout<< "Elemento: " << pair.first << " Frequenza: " << pair.second<< std::endl;
   }
+
+  std::string filename = "output.txt";
+  A.summary(filename);
 	
 }
