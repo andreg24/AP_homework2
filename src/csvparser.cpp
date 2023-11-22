@@ -48,6 +48,7 @@ void CSVParser::read() {
 				header.push_back(cell);
 				//--- should we raise an error if a column name is missing??? ---
 			}
+            size=header.size();
 			++line_counter;
 		} 
 		// second line -> detect type and allocate columns
@@ -73,7 +74,7 @@ void CSVParser::read() {
 		else {
 			int counter = 0; // columns index counter
 			while (getline(lineStream, cell, ',')) {
-				cout << cell.c_str() << endl;
+				//cout << cell.c_str() << endl;
 				// is a string column
 				if (holds_alternative<vector<optional<string>>>(dataset[counter])) {
 					optional<string> value;
@@ -117,13 +118,13 @@ variant<optional<string>, optional<double>> CSVParser::operator()(const int row,
 
 double CSVParser::mean_col(size_t col_idx){
 		if (col_idx >= dataset.size() || col_idx < 0) {
-            cerr << "Column index out of range." << endl;
+        throw out_of_range("Column index out of range.");
             return 0.0;}
 
         if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
             const auto& double_column = get<vector<optional<double>>>(dataset[col_idx]);
             if (double_column.empty()) {
-                cerr << "Column is empty." << std::endl;
+                throw runtime_error("Column is empty.");
                 return 0.0;
             }
 
@@ -133,7 +134,7 @@ double CSVParser::mean_col(size_t col_idx){
             }
 			return boost::accumulators::mean(acc);
        		} else {
-            cerr << "Column is not numeric." << std::endl;
+            throw invalid_argument("Column is not numeric.");
             return 0.0;
         }
 
@@ -142,14 +143,14 @@ double CSVParser::mean_col(size_t col_idx){
 
   double CSVParser::var_col(size_t col_idx) {
         if (col_idx >= dataset.size() || col_idx < 0) {
-            cerr << "Column index out of range." << endl;
+            throw out_of_range("Column index out of range.");
             return 0.0;
         }
 
         if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
             const auto& double_column = std::get<std::vector<optional<double>>>(dataset[col_idx]);
             if (double_column.empty()) {
-                cerr << "Column is empty." << endl;
+                throw runtime_error("Column is empty.");
                 return 0.0;
             }
 
@@ -160,21 +161,21 @@ double CSVParser::mean_col(size_t col_idx){
 
             return boost::accumulators::variance(acc);
         } else {
-            cerr << "Column is not numeric." << endl;
+            throw invalid_argument( "Column is not numeric." );
             return 0.0;
         }
   }
 
 double CSVParser::median_col(size_t col_idx) {
         if (col_idx >= dataset.size() || col_idx < 0) {
-            std::cerr << "Column index out of range." << std::endl;
+            throw out_of_range("Column index out of range.");
             return 0.0;
         }
 
         if (std::holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
             const auto& double_column = std::get<std::vector<optional<double>>>(dataset[col_idx]);
             if (double_column.empty()) {
-                std::cerr << "Column is empty." << std::endl;
+                throw runtime_error("Column is empty.");
                 return 0.0;
             }
 
@@ -185,7 +186,7 @@ double CSVParser::median_col(size_t col_idx) {
 
             return median(acc);
         } else {
-            std::cerr << "Column is not numeric." << std::endl;
+            throw invalid_argument("Column is not numeric.");
             return 0.0;
         }
   }
@@ -199,12 +200,16 @@ map<string, int> CSVParser::countFrequency(size_t col_idx) {
     map<string, int> stringFrequencyMap;
 
         if (col_idx >= dataset.size() || col_idx < 0) {
-            cerr << "Column index out of range." << endl;
+            throw out_of_range("Column index out of range.");
             return stringFrequencyMap;
         }
 
         if (holds_alternative<vector<optional<string>>>(dataset[col_idx])) {
             const auto& string_column = get<vector<optional<string>>>(dataset[col_idx]);
+            if (string_column.empty()) {
+            throw runtime_error("Column is empty.");
+            return stringFrequencyMap;
+            }
 
             for (const auto& cell : string_column) {
                 if (cell.has_value()) {
@@ -216,6 +221,10 @@ map<string, int> CSVParser::countFrequency(size_t col_idx) {
             return stringFrequencyMap;
         } else {
             const auto& numeric_column = get<vector<optional<double>>>(dataset[col_idx]);
+            if (numeric_column.empty()) {
+            throw runtime_error("Column is empty.");
+            return stringFrequencyMap;
+        }
 
             for (const auto& cell : numeric_column) {
                 if (cell.has_value()) {
@@ -230,7 +239,7 @@ map<string, int> CSVParser::countFrequency(size_t col_idx) {
 
 double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
         if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
-            cerr << "Column index out of range." << endl;
+            throw out_of_range( "Column index out of range.");
             return 0.0;
         }
 
@@ -238,7 +247,7 @@ double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
             const auto& double_column1 = std::get<std::vector<optional<double>>>(dataset[col_idx1]);
             const auto& double_column2 = std::get<std::vector<optional<double>>>(dataset[col_idx2]);
             if (double_column1.empty() || double_column2.empty()) {
-                cerr << "One of the columns is empty." << endl;
+                throw runtime_error("One of the columns is empty.");
                 return 0.0;
             }
 
@@ -251,10 +260,22 @@ double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
 
             return covariance(acc);
         } else {
-            cerr << "One of the columns is not numeric." << endl;
+            throw invalid_argument("One of the columns is not numeric.");
             return 0.0;
         }
     }
+
+    void CSVParser::summary(const string& filename){
+        ofstream outFile(filename);
+        if(outFile.is_open()){
+            outFile<<"ciao";
+            outFile<<"ecco";
+            outFile.close();
+        }
+        else{
+            throw runtime_error("unable to open the file");
+        }
+    };
 
 
 
