@@ -271,15 +271,31 @@ void CSVParser::summary(const string& filename){
        for (unsigned int i = 0; i < size; i++){
            if (holds_alternative<std::vector<optional<double>>>(dataset[i])){
                const auto& double_column = get<vector<optional<double>>>(dataset[i]);
-               outFile << "Column " << i << ": Mean = " << mean_col(i) 
+               outFile << "Column " << header[i] << ": Mean = " << mean_col(i) 
                       << ", Median = " << median_col(i) 
                       << ", Std Dev = " << dev_std(i) 
                       << ", Variance = " << var_col(i) << "\n";
+                map<string, int> freq = countFrequency(i);
+                for (const auto& pair : freq) {
+                    outFile << " Element:  " << pair.first << " Frequency: " << pair.second << endl;
+                }
+                outFile << "Correlation with other numeric columns:" << endl;
+                for (size_t j = 0; j < dataset.size(); ++j) {
+                    if (j != i &&
+                        holds_alternative<vector<optional<double>>>(dataset[j])) {
+                        double correlation = correlation_analysis(i, j);
+                        outFile << "  With column '" << header[j] << "': " << correlation << endl;
+                    }
+                }
            }
-           else{
-                
-                outFile << "Column " << i << " non numeric column"<<"\n";
-  }
+           else {
+                outFile << "Column " << header[i] << " non numeric column"<<"\n";
+                map<string, int> freq = countFrequency(i);
+                for (const auto& pair : freq) {
+                    outFile << " Element:  " << pair.first << " Frequency: " << pair.second<<endl;
+                }
+            }
+            outFile<< "--------------------------------------------------------"<< endl;
 
        }
        outFile.close();
