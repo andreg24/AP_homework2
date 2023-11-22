@@ -195,6 +195,66 @@ double CSVParser::dev_std(size_t col_idx) {
     return std::sqrt(var_col(col_idx));
   }
 
+map<string, int> CSVParser::countFrequency(size_t col_idx) {
+    map<string, int> stringFrequencyMap;
+
+        if (col_idx >= dataset.size() || col_idx < 0) {
+            cerr << "Column index out of range." << endl;
+            return stringFrequencyMap;
+        }
+
+        if (holds_alternative<vector<optional<string>>>(dataset[col_idx])) {
+            const auto& string_column = get<vector<optional<string>>>(dataset[col_idx]);
+
+            for (const auto& cell : string_column) {
+                if (cell.has_value()) {
+                    string value = cell.value();
+                    stringFrequencyMap[value]++;
+                }
+            }
+
+            return stringFrequencyMap;
+        } else {
+            const auto& numeric_column = get<vector<optional<double>>>(dataset[col_idx]);
+
+            for (const auto& cell : numeric_column) {
+                if (cell.has_value()) {
+                    double value = cell.value();
+                    stringFrequencyMap[to_string(cell.value())]++;
+                }
+            }
+
+            return stringFrequencyMap;
+        }
+}
+
+double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
+        if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
+            cerr << "Column index out of range." << endl;
+            return 0.0;
+        }
+
+        if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx1]) && holds_alternative<std::vector<optional<double>>>(dataset[col_idx2])) {
+            const auto& double_column1 = std::get<std::vector<optional<double>>>(dataset[col_idx1]);
+            const auto& double_column2 = std::get<std::vector<optional<double>>>(dataset[col_idx2]);
+            if (double_column1.empty() || double_column2.empty()) {
+                cerr << "One of the columns is empty." << endl;
+                return 0.0;
+            }
+
+            boost::accumulators::accumulator_set<double, stats<tag::covariance<double, tag::covariate1> > > acc;
+            for (size_t i = 0; i < double_column1.size(); ++i) {
+                acc(double_column1[i].value(), covariate1 = double_column2[i].value());
+            }
+
+            
+
+            return covariance(acc);
+        } else {
+            cerr << "One of the columns is not numeric." << endl;
+            return 0.0;
+        }
+    }
 
 
 
