@@ -265,16 +265,29 @@ double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
         }
     }
 
-    void CSVParser::summary(const string& filename){
-        ofstream outFile(filename);
-        if(outFile.is_open()){
-            outFile<<"ciao";
-            outFile<<"ecco";
-            outFile.close();
+void CSVParser::summary(const string& filename){
+   ofstream outFile(filename);
+   if(outFile.is_open()){
+       for (unsigned int i = 0; i < size; i++){
+           if (holds_alternative<std::vector<optional<double>>>(dataset[i])){
+               const auto& double_column = get<vector<optional<double>>>(dataset[i]);
+               outFile << "Column " << i << ": Mean = " << mean_col(i) 
+                      << ", Median = " << median_col(i) 
+                      << ", Std Dev = " << dev_std(i) 
+                      << ", Variance = " << var_col(i) << "\n";
+           }
+           else{
+                
+                outFile << "Column " << i << " non numeric column"<<"\n";
+  }
+
+       }
+       outFile.close();
         }
-        else{
-            throw runtime_error("unable to open the file");
-        }
+   
+   else{
+       throw runtime_error("unable to open the file");
+   }
     };
 
 
