@@ -5,10 +5,12 @@
 #include <string>
 #include <variant>
 #include <optional>
+#include <map>
 #include <vector>
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics.hpp>
 #include <boost/accumulators/statistics/median.hpp>
+#include <boost/accumulators/statistics/covariance.hpp>
 
 
 using namespace std;
@@ -66,6 +68,14 @@ public:
 	ColIterator end() const{
 		return ColIterator(*this, dataset.size());
 	}
+
+    map<string, int> countFrequency(size_t col_idx);
+
+    double covar(size_t col_idx1, size_t col_idx2);
+
+    double correlation_analysis(size_t col_idx1, size_t col_idx2) {
+        return covar(col_idx1, col_idx2)/(dev_std(col_idx1)*dev_std(col_idx2));
+    }
 
 
 private:
