@@ -283,13 +283,18 @@ void CSVParser::summary(const string& filename){
                 for (size_t j = 0; j < dataset.size(); ++j) {
                     if (j != i &&
                         holds_alternative<vector<optional<double>>>(dataset[j])) {
+                        try {
                         double correlation = correlation_analysis(i, j);
                         outFile << "  With column '" << header[j] << "': " << correlation << endl;
+                        }
+                        catch (const exception& e) {
+                        outFile <<" For the column "<<header[j]<<" "<< e.what()<< endl;
+           }
                     }
                 }
            }
            else {
-                outFile << "Column " << header[i] << " non numeric column"<<"\n";
+                outFile << "Column " << header[i] << ": non numeric column"<<"\n";
                 map<string, int> freq = countFrequency(i);
                 for (const auto& pair : freq) {
                     outFile << " Element:  " << pair.first << " Frequency: " << pair.second<<endl;
