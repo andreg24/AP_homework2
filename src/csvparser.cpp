@@ -62,7 +62,8 @@ void CSVParser::read() {
 					dataset.push_back(temp); 
 				}
 				else {
-					optional<string> value = cell;
+					optional<string> value;
+					if (cell.size() > 0) { value = cell; }
 					vector<optional<string>> temp;
 					temp.push_back(value);
 					dataset.push_back(temp);
