@@ -17,37 +17,33 @@ private:
 public:
   ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, double t_end, VectorXd y0) : fun(fun), t_start(t_start), t_end(t_end), y0(y0) {};
 
-   pair<VectorXd, vector<VectorXd> > RK4(unsigned int n) {
+   vector<VectorXd> RK4(unsigned int n) {
        double h = (t_end - t_start)/n; 
-       vector<VectorXd> Y;
-       VectorXd t(n);
-       Y.push_back(y0);
-       t[0]=t_start;
-       
-       
+       double t=t_start;    
+       std::vector<VectorXd> Y;   
        //double t_n = t_start;
        VectorXd y = y0;
+       Y.push_back(y0);
        for (unsigned int j=0; j<n; j++) {
-           VectorXd tempY1=y;
-           VectorXd k1 = fun(t[j], y);
+
+           VectorXd k1 = fun(t, y);
 /*
            VectorXd k2 = fun(t[j]+h/2, Y[j]+0.5*k1*h);
            VectorXd k3 = fun(t[j]+h/2, Y[j]+0.5*k2*h);
            VectorXd k4 = fun(t[j]+h, Y[j]+k3*h);
 */
-           VectorXd tempY2=y+0.5*k1*h;
-           VectorXd k2 = fun(t[j]+h/2, tempY2);
-           VectorXd tempY3=y+0.5*k2*h;
-           VectorXd k3 = fun(t[j]+h/2, tempY3);
-           VectorXd tempY4=y+k3*h;
-           VectorXd k4 = fun(t[j]+h, tempY4);
-           t[j+1]=t[j]+h;
+           VectorXd k2 = fun(t+h/2, y+0.5*k1*h);
+           VectorXd k3 = fun(t+h/2, y+0.5*k2*h);
+           VectorXd k4 = fun(t+h, y+k3*h);
+           t+=h;
 
            y+=+h/6*(k1+2*k2+2*k3+k4);
            Y.push_back(y);
+           std::cout<<"ciao"<<y<<endl;
+
        }
-       pair<VectorXd, vector<VectorXd>> res(t,Y);
-       return res; 
+     //  pair<VectorXd, vector<VectorXd>> res(t,Y);
+       return Y; 
    }
 };
 
@@ -69,9 +65,10 @@ int main(){
    y0<<4, 2;
    unsigned int n=5000;
    ODESolver solver= ODESolver( fun, t_start,t_end,y0);
-   pair<VectorXd, vector<VectorXd> > solution=solver.RK4(n);
-   for (unsigned int j=0; j<1; j++){
-       std::cout << solution.second[j].transpose() << std::endl;
+   std::vector<VectorXd> solution=solver.RK4(n);
+   for (unsigned int j=0; j<5; j++){
+    std::cout<<solution[j]<<endl;
+       //std::cout << solution.second[j].transpose() << std::endl;
    }
 
    return 0;
