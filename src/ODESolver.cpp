@@ -2,7 +2,7 @@
 #include <functional>
 #include <cmath>
 #include <vector>
-#include "../../eigen/Eigen/Dense"
+#include "./eigen/Eigen/Dense"
 
 using namespace Eigen;
 using namespace std;
@@ -32,12 +32,12 @@ public:
            VectorXd k3 = fun(t[j]+h/2, Y[j]+0.5*k2*h);
            VectorXd k4 = fun(t[j]+h, Y[j]+k3*h);
 */
-           VectorXd k2 = fun(t+h/2, y+0.5*k1*h);
-           VectorXd k3 = fun(t+h/2, y+0.5*k2*h);
+           VectorXd k2 = fun(t+h/2.0, y+0.5*k1*h);
+           VectorXd k3 = fun(t+h/2.0, y+0.5*k2*h);
            VectorXd k4 = fun(t+h, y+k3*h);
            t+=h;
 
-           y+=+h/6*(k1+2*k2+2*k3+k4);
+           y+=+h/6.0*(k1+2*k2+2*k3+k4);
            Y.push_back(y);
            std::cout<<"ciao"<<y<<endl;
 
@@ -48,12 +48,12 @@ public:
 };
 
 VectorXd fun(double t, VectorXd y) {
-   double a=2/3;
-   double b=4/3;
-   double c=1;
-   double d=1;
+   double a=2.0/3.0;
+   double b=4.0/3.0;
+   double c=1.0;
+   double d=1.0;
    VectorXd dy(y.size());
-   dy(0)=a*y(0)-b*y(0)*y(1)*t/t;
+   dy(0)=a*y(0)-b*y(0)*y(1);
    dy(1)=c*y(1)*y(0)-d*y(1);
    return dy;
 }
