@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include "./eigen/Eigen/Dense"
+#include <chrono>
 
 using namespace Eigen;
 using namespace std;
@@ -36,4 +37,27 @@ public:
 
     // Variation of euler method that saves the results into a csv
     void euler_csv(unsigned int n);
+
+    // Accuracy
+    double accuracy(vector<VectorXd> Y, function<VectorXd(double)> analitic) {
+      double max_error = 0.0;
+      VectorXd diff(Y.size()-1); 
+      cout<<Y[0].size()<<endl;
+      cout<<Y.size()<<endl;
+        for (unsigned int i=0; i < Y[0].size(); i++) //ciclo sulle righe 
+        {
+          for (unsigned int j=1; j<Y.size(); j++) // ciclo sulle colonne a partire dalla seconda 
+          {
+              diff[j-1] = Y[j][i] - analitic(Y[0][i])[j];
+              cout << diff[j-1]<<endl;
+          }
+          max_error = max(diff.norm(), max_error);
+          
+        }
+        return max_error;
+    }
+
+    // Convergence order
+
+
 };
