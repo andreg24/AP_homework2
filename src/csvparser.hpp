@@ -35,6 +35,8 @@ public:
 	double median_col(size_t col_idx);
 	double dev_std(size_t col_idx) ;
 	void summary(const string& filename);
+	void classification(string wanted, int col_idx);
+
 	// prints the dataset by columns
 	//void print();
 
@@ -75,10 +77,10 @@ public:
     double covar(size_t col_idx1, size_t col_idx2);
 
     double correlation_analysis(size_t col_idx1, size_t col_idx2) {
-		/*if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
+		if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
             cerr << "Column index out of range." << endl;
             return 0.0;
-        }*/
+        }
 		optional<double> result;
 		if (dev_std(col_idx1)==0 || dev_std(col_idx2)==0){
 			throw runtime_error("Standard deviation is zero. You can't divide by zero!");			return result.value();
