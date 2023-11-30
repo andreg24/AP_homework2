@@ -96,7 +96,7 @@ void CSVParser::read() {
 						if (cell.size() == 0) {	// is a missing value
 							get<vector<optional<double>>>(dataset[counter]).push_back(value);
 						} else {
-							throw invalid_argument("Brutto coglione hai messo delle stringhe nella colonna dei double");
+							throw invalid_argument("You can't put string in a column of double");
 						}
 					}
 				}
