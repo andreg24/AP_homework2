@@ -312,13 +312,13 @@ void CSVParser::summary(const string& filename){
    }
     };
 
-void CSVParser::classification(string wanted, int col_idx){
+void CSVParser::classification(string wanted, int col_idx,const string& filename){
         if (col_idx >= dataset.size() || col_idx < 0) {
             throw out_of_range("Column index out of range.");
         }
-        ofstream outFile("classification.txt");
+        ofstream outFile(filename);
         if(outFile.is_open()){
-            outFile << "CLASSIFICATION OF: "<<wanted;
+            outFile << "CLASSIFICATION OF: "<<wanted<<"\n";
         if (holds_alternative<vector<optional<string>>>(dataset[col_idx])) {
             const auto& string_column = get<vector<optional<string>>>(dataset[col_idx]);
 
@@ -337,14 +337,45 @@ void CSVParser::classification(string wanted, int col_idx){
                             const auto& tmp = get<vector<optional<double>>>(dataset[c]);
                             outFile<<" "<< tmp[row_idx].value()<<" ";
                         }
-                }
+                    }
+                    outFile<<"\n";
             }
             }
         }
+        else{
+            const auto& double_column = get<vector<optional<double>>>(dataset[col_idx]);
+            if (double_column.empty()) {
+            throw runtime_error("Column is empty.");
+            }
+            for (unsigned int row_idx=0; row_idx<double_column.size();row_idx++){
+                if(double_column[row_idx].value()==stod(wanted)){
+                    outFile<< "Row "<<row_idx<<": "<<"\n";
+                    for(unsigned int c=0;c<size;c++){
+                        if (holds_alternative<vector<optional<string>>>(dataset[c])) {
+                            const auto& tmp = get<vector<optional<string>>>(dataset[c]);
+                            outFile<<" "<< tmp[row_idx].value()<<" ";
+                        }
+                        else {
+                            const auto& tmp = get<vector<optional<double>>>(dataset[c]);
+                            outFile<<" "<< tmp[row_idx].value()<<" ";
+                        }
+                    }
+                    outFile<<"\n";
+            }
+            }
         }
+               outFile.close();
+        }
+   
+   else{
+       throw runtime_error("unable to open the file");
+   }
+    };
+      
+        
 
 
-};
+
 
 
 /*  DA AGGIORNARE
