@@ -35,7 +35,7 @@ public:
 	double median_col(size_t col_idx);
 	double dev_std(size_t col_idx) ;
 	void summary(const string& filename);
-	void classification(string wanted, int col_idx);
+	void classification(string wanted, int col_idx, const string& filename);
 
 	// prints the dataset by columns
 	//void print();
