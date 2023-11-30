@@ -1,7 +1,8 @@
 #include "csvparser.hpp"
-
 /*
-	useful functions
+-------------------------------------------------
+    USEFUL FUNCTIONS
+-------------------------------------------------
 */
 
 bool check_conversion(const string& cell) {
@@ -16,7 +17,6 @@ bool check_conversion(const string& cell) {
 	else { return false; }
 }
 
-
 void print_vector(const vector<string>& vect) {
 	for (unsigned int i=0; i<vect.size(); ++i) {
 		cout << vect[i] << ", ";
@@ -24,10 +24,13 @@ void print_vector(const vector<string>& vect) {
 	cout << endl;
 }
 
+//------------------------------------------------------------
 
-
+//CONSTRUCTOR
 CSVParser::CSVParser(const string& input_file) : input_file(input_file)  {}
 
+
+//PARSER
 void CSVParser::read() {
 	/* 
 		Reads the CSV file and stores the result in dataset
@@ -103,115 +106,205 @@ void CSVParser::read() {
 	}
 }
 
-
+//OPERATOR ()
 variant<optional<string>, optional<double>> CSVParser::operator()(const int row, const int col) {
 	variant<vector<optional<string>>, vector<optional<double>>> column = dataset[col];
 	variant<optional<string>, optional<double>> result;
 	try {
 		result = get<vector<optional<string>>>(column)[row];
 	} catch (bad_variant_access& e) {
-		cout << "gotcha" << endl;
+		//cout << "gotcha" << endl;<<<<<<<<<<<<<<<--------------------------
+        //<<<<<<<<<<<<<<<<<<<<<<<<<------------------------
 		result = get<vector<optional<double>>>(column)[row];
 	}
 	return result;
 }
 
-
+//MEAN
 double CSVParser::mean_col(size_t col_idx){
+
+        //checks on column index
 		if (col_idx >= dataset.size() || col_idx < 0) {
         throw out_of_range("Column index out of range.");
             return 0.0;}
 
+        //if dataset[col_idx] is a column of double
         if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
             const auto& double_column = get<vector<optional<double>>>(dataset[col_idx]);
+            
+            //checks if the column is empty
             if (double_column.empty()) {
                 throw runtime_error("Column is empty.");
                 return 0.0;
             }
 
+            //creates the boost accumulator
             boost::accumulators::accumulator_set<double, boost::accumulators::stats<boost::accumulators::tag::mean>> acc;
             for (const auto& val : double_column) {
                 acc(val.value());
             }
+
 			return boost::accumulators::mean(acc);
-       		} else {
+       		} 
+
+            else {
+            //if the column is not of double
             throw invalid_argument("Column is not numeric.");
             return 0.0;
         }
 
         }
 
+//VARIANCE
+double CSVParser::var_col(size_t col_idx) {
 
-  double CSVParser::var_col(size_t col_idx) {
+        //checks on column index
         if (col_idx >= dataset.size() || col_idx < 0) {
             throw out_of_range("Column index out of range.");
             return 0.0;
         }
 
+        //if dataset[col_idx] is a column of double
         if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
             const auto& double_column = std::get<std::vector<optional<double>>>(dataset[col_idx]);
+            
+            //checks if the column is empty
             if (double_column.empty()) {
                 throw runtime_error("Column is empty.");
                 return 0.0;
             }
 
+            //creates the boost accumulator
             boost::accumulators::accumulator_set<double, boost::accumulators::stats<boost::accumulators::tag::variance>> acc;
             for (const auto& val : double_column) {
                 acc(val.value());
             }
 
             return boost::accumulators::variance(acc);
-        } else {
+        } 
+        else {
+            //if the column is not of double
             throw invalid_argument( "Column is not numeric." );
             return 0.0;
         }
   }
 
+//MEDIAN
 double CSVParser::median_col(size_t col_idx) {
+        
+        //checks on column index
         if (col_idx >= dataset.size() || col_idx < 0) {
             throw out_of_range("Column index out of range.");
             return 0.0;
         }
 
+        //if dataset[col_idx] is a column of double
         if (std::holds_alternative<std::vector<optional<double>>>(dataset[col_idx])) {
             const auto& double_column = std::get<std::vector<optional<double>>>(dataset[col_idx]);
+            
+            //checks if the column is empty
             if (double_column.empty()) {
                 throw runtime_error("Column is empty.");
                 return 0.0;
             }
-
+            
+            //creates the boost accumulator
             accumulator_set<double, stats<tag::median(with_p_square_quantile)>> acc;
             for (const auto& val : double_column) {
                 acc(val.value());
             }
 
             return median(acc);
-        } else {
+        } 
+        else {
+            //if the column is not of double
             throw invalid_argument("Column is not numeric.");
             return 0.0;
         }
   }
 
-
-double CSVParser::dev_std(size_t col_idx) {
+//STANDARD DEVIATION
+double CSVParser::std_dev(size_t col_idx) {
     return std::sqrt(var_col(col_idx));
   }
 
+//COVARIANCE 
+double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
+
+        //checks on column indexes
+        if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
+            throw out_of_range( "Column index out of range.");
+            return 0.0;
+        }
+
+        //if dataset[col_idx1] and dataset[col_idx2] are columns of double
+        if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx1]) && holds_alternative<std::vector<optional<double>>>(dataset[col_idx2])) {
+            const auto& double_column1 = std::get<std::vector<optional<double>>>(dataset[col_idx1]);
+            const auto& double_column2 = std::get<std::vector<optional<double>>>(dataset[col_idx2]);
+            
+            //checks if the columns are empty
+            if (double_column1.empty() || double_column2.empty()) {
+                throw runtime_error("One of the columns is empty.");
+                return 0.0;
+            }
+
+            //creates the boost accumulators
+            boost::accumulators::accumulator_set<double, stats<tag::covariance<double, tag::covariate1> > > acc;
+            for (size_t i = 0; i < double_column1.size(); ++i) {
+                acc(double_column1[i].value(), covariate1 = double_column2[i].value());
+            }
+
+            return covariance(acc);
+        } 
+        else {
+            //if the column is not of double
+            throw invalid_argument("One of the columns is not numeric.");
+            return 0.0;
+        }
+    }
+
+//CORRELATION ANALYSIS
+double CSVParser::correlation_analysis(size_t col_idx1, size_t col_idx2) {
+
+        //checks on columns indexes
+		if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
+            cerr << "Column index out of range." << endl;
+            return 0.0;
+        }
+
+		optional<double> result;
+
+        //cecks if the standard deviation of the column is zero
+		if (std_dev(col_idx1)==0 || std_dev(col_idx2)==0){
+			throw runtime_error("Standard deviation is zero. You can't divide by zero!");			
+			return result.value();
+		}
+
+        result=covar(col_idx1, col_idx2)/(std_dev(col_idx1)*std_dev(col_idx2));
+		return result.value();
+    }
+
+//FREQUENCY COUNT
 map<string, int> CSVParser::countFrequency(size_t col_idx) {
     map<string, int> stringFrequencyMap;
 
+        //checks on column index
         if (col_idx >= dataset.size() || col_idx < 0) {
             throw out_of_range("Column index out of range.");
             return stringFrequencyMap;
         }
 
+        //if dataset[col_idx] is a column of double
         if (holds_alternative<vector<optional<string>>>(dataset[col_idx])) {
             const auto& string_column = get<vector<optional<string>>>(dataset[col_idx]);
+            
+            //checks if the column is empty
             if (string_column.empty()) {
             throw runtime_error("Column is empty.");
             return stringFrequencyMap;
             }
 
+            //fill the frequency map
             for (const auto& cell : string_column) {
                 if (cell.has_value()) {
                     string value = cell.value();
@@ -220,13 +313,18 @@ map<string, int> CSVParser::countFrequency(size_t col_idx) {
             }
 
             return stringFrequencyMap;
-        } else {
+        } 
+
+        //if dataset[col_idx] is a column of double
+        else {
             const auto& numeric_column = get<vector<optional<double>>>(dataset[col_idx]);
+            
+            //checks if the column is empty
             if (numeric_column.empty()) {
             throw runtime_error("Column is empty.");
             return stringFrequencyMap;
         }
-
+            //fill the frequency map
             for (const auto& cell : numeric_column) {
                 if (cell.has_value()) {
                     double value = cell.value();
@@ -238,43 +336,22 @@ map<string, int> CSVParser::countFrequency(size_t col_idx) {
         }
 }
 
-double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
-        if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
-            throw out_of_range( "Column index out of range.");
-            return 0.0;
-        }
-
-        if (holds_alternative<std::vector<optional<double>>>(dataset[col_idx1]) && holds_alternative<std::vector<optional<double>>>(dataset[col_idx2])) {
-            const auto& double_column1 = std::get<std::vector<optional<double>>>(dataset[col_idx1]);
-            const auto& double_column2 = std::get<std::vector<optional<double>>>(dataset[col_idx2]);
-            if (double_column1.empty() || double_column2.empty()) {
-                throw runtime_error("One of the columns is empty.");
-                return 0.0;
-            }
-
-            boost::accumulators::accumulator_set<double, stats<tag::covariance<double, tag::covariate1> > > acc;
-            for (size_t i = 0; i < double_column1.size(); ++i) {
-                acc(double_column1[i].value(), covariate1 = double_column2[i].value());
-            }
-
-            
-
-            return covariance(acc);
-        } else {
-            throw invalid_argument("One of the columns is not numeric.");
-            return 0.0;
-        }
-    }
-
+//SUMMARY
 void CSVParser::summary(const string& filename){
-   ofstream outFile(filename);
-   if(outFile.is_open()){
-       for (unsigned int i = 0; i < size; i++){
-           if (holds_alternative<std::vector<optional<double>>>(dataset[i])){
+    //open the desired file
+    ofstream outFile(filename);
+    if(outFile.is_open()){
+
+        for (unsigned int i = 0; i < size; i++){
+
+            //if dataset[col_idx] is a column of double
+            if (holds_alternative<std::vector<optional<double>>>(dataset[i])){
                const auto& double_column = get<vector<optional<double>>>(dataset[i]);
+
+               //compute statistical operations
                outFile << "Column " << header[i] << ": Mean = " << mean_col(i) 
                       << ", Median = " << median_col(i) 
-                      << ", Std Dev = " << dev_std(i) 
+                      << ", Std Dev = " << std_dev(i) 
                       << ", Variance = " << var_col(i) << "\n";
                 map<string, int> freq = countFrequency(i);
                 for (const auto& pair : freq) {
@@ -295,7 +372,9 @@ void CSVParser::summary(const string& filename){
                 }
            }
            else {
+            //if dataset[col_idx] is a column of string
                 outFile << "Column " << header[i] << ": non numeric column"<<"\n";
+                //compute frequency count
                 map<string, int> freq = countFrequency(i);
                 for (const auto& pair : freq) {
                     outFile << " Element:  " << pair.first << " Frequency: " << pair.second<<endl;
@@ -312,22 +391,38 @@ void CSVParser::summary(const string& filename){
    }
     };
 
+//CLASSIFICATION
 void CSVParser::classification(string wanted, int col_idx,const string& filename){
+        
+        //checks on column index        
         if (col_idx >= dataset.size() || col_idx < 0) {
             throw out_of_range("Column index out of range.");
         }
+
+        //boolean to check if the wanted element has been found or not
+        bool found=false;
+
+        //open the file
         ofstream outFile(filename);
         if(outFile.is_open()){
             outFile << "CLASSIFICATION OF: "<<wanted<<"\n";
+
+        //if dataset[col_idx] is a column of double
         if (holds_alternative<vector<optional<string>>>(dataset[col_idx])) {
             const auto& string_column = get<vector<optional<string>>>(dataset[col_idx]);
-
+            
+            //checks if the column is empty
             if (string_column.empty()) {
             throw runtime_error("Column is empty.");
             }
+
             for (unsigned int row_idx=0; row_idx<string_column.size();row_idx++){
+                //find the row indexes in which there is the wanted element
                 if(string_column[row_idx].value()==wanted){
+                    found=true;
                     outFile<< "Row "<<row_idx<<": "<<"\n";
+
+                    //print the corresponding row
                     for(unsigned int c=0;c<size;c++){
                         if (holds_alternative<vector<optional<string>>>(dataset[c])) {
                             const auto& tmp = get<vector<optional<string>>>(dataset[c]);
@@ -343,14 +438,21 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
             }
         }
         else{
+            //if dataset[col_idx] is a column of string
             const auto& double_column = get<vector<optional<double>>>(dataset[col_idx]);
+            
+            //checks if the column is empty
             if (double_column.empty()) {
             throw runtime_error("Column is empty.");
             }
+
             for (unsigned int row_idx=0; row_idx<double_column.size();row_idx++){
+                //find the row indexes in which there is the wanted element
                 if(double_column[row_idx].value()==stod(wanted)){
+                    found=true;
                     outFile<< "Row "<<row_idx<<": "<<"\n";
                     for(unsigned int c=0;c<size;c++){
+                        //print the corresponding row
                         if (holds_alternative<vector<optional<string>>>(dataset[c])) {
                             const auto& tmp = get<vector<optional<string>>>(dataset[c]);
                             outFile<<" "<< tmp[row_idx].value()<<" ";
@@ -364,6 +466,11 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
             }
             }
         }
+
+        //if the wanted element is not in the column
+        if (found==false){
+            outFile<<"There is no "<<wanted<< " in column "<<col_idx;
+        }
                outFile.close();
         }
    
@@ -373,33 +480,3 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
     };
       
         
-
-
-
-
-
-/*  DA AGGIORNARE
-void CSVParser::print() {
-
-    std::cout<<"col"<<dataset.size();
-
-    std::cout<< "row"<< std::get<std::vector<double>>(dataset[0]).size();
-
-   // std::get<std::vector<std::string>>;
-
- for (const auto& column : dataset) {
-   if (std::holds_alternative<std::vector<std::string>>(column)) {
-     const auto& string_column = std::get<std::vector<std::string>>(column);
-     for (const auto& cell : string_column) {
-       std::cout << cell << " ";
-     }
-     std::cout << "\n";
-   } else if (std::holds_alternative<std::vector<double>>(column)) {
-     const auto& double_column = std::get<std::vector<double>>(column);
-     for (const auto& cell : double_column) {
-       std::cout << cell << " ";
-     }
-
- }
-}/
-*/
