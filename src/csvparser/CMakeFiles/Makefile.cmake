@@ -7,10 +7,10 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
-  "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/cmake/boost/lib/cmake/Boost-1.83.0/BoostConfig.cmake"
-  "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/cmake/boost/lib/cmake/Boost-1.83.0/BoostConfigVersion.cmake"
-  "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/cmake/boost/lib/cmake/boost_headers-1.83.0/boost_headers-config-version.cmake"
-  "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/cmake/boost/lib/cmake/boost_headers-1.83.0/boost_headers-config.cmake"
+  "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/extlib/boost/lib/cmake/Boost-1.83.0/BoostConfig.cmake"
+  "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/extlib/boost/lib/cmake/Boost-1.83.0/BoostConfigVersion.cmake"
+  "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/extlib/boost/lib/cmake/boost_headers-1.83.0/boost_headers-config-version.cmake"
+  "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/extlib/boost/lib/cmake/boost_headers-1.83.0/boost_headers-config.cmake"
   "/home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/AP_homework2/src/CMakeLists.txt"
   "CMakeFiles/3.25.1/CMakeCCompiler.cmake"
   "CMakeFiles/3.25.1/CMakeCXXCompiler.cmake"

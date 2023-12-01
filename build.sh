@@ -2,17 +2,19 @@
 
 set -x # print commands executed
 
-# compile csvparser and odesolver as dynamic libraries
+# compile csvparer as shared library
 cd src
 mkdir csvparser
 cd csvparser
 cmake -DLIB_TO_COMPILE="csvparser" ..
 make
 
+# compile odesolver as shared library
 cd ..
 mkdir odesolver
 cd odesolver
 cmake -DLIB_TO_COMPILE="odesolver" ..
 make
 
+# compile main
 

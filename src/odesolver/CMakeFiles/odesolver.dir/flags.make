@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -Dodesolver_EXPORTS
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -isystem /home/andreg/Desktop/uni/advanced_programming/homeworks/hm2/proj/foldeigen/eigen-3.4.0
 
 CXX_FLAGS = -fPIC
 
