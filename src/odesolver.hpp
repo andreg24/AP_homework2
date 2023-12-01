@@ -6,7 +6,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
-#include "./eigen/Eigen/Dense"
+#include "Eigen/Dense"
 #include <chrono>
 
 using namespace Eigen;
