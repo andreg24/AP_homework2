@@ -407,7 +407,7 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
         if(outFile.is_open()){
             outFile << "CLASSIFICATION OF: "<<wanted<<"\n";
 
-        //if dataset[col_idx] is a column of double
+        //if dataset[col_idx] is a column of string
         if (holds_alternative<vector<optional<string>>>(dataset[col_idx])) {
             const auto& string_column = get<vector<optional<string>>>(dataset[col_idx]);
             
@@ -418,6 +418,7 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
 
             for (unsigned int row_idx=0; row_idx<string_column.size();row_idx++){
                 //find the row indexes in which there is the wanted element
+
                 if(string_column[row_idx].value()==wanted){
                     found=true;
                     outFile<< "Row "<<row_idx<<": "<<"\n";
@@ -438,8 +439,8 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
             }
         }
         else{
-            //if dataset[col_idx] is a column of string
-            const auto& double_column = get<vector<optional<double>>>(dataset[col_idx]);
+            //if dataset[col_idx] is a column of double
+            try{const auto& double_column = get<vector<optional<double>>>(dataset[col_idx]);
             
             //checks if the column is empty
             if (double_column.empty()) {
@@ -464,7 +465,10 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
                     }
                     outFile<<"\n";
             }
-            }
+            }}
+            catch(invalid_argument& e) {
+                outFile<<"The element "<<wanted<<" is not a double."<<"\n";             }
+
         }
 
         //if the wanted element is not in the column
@@ -479,5 +483,3 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
        throw runtime_error("unable to open the file");
    }
     };
-      
-        
