@@ -188,7 +188,6 @@ double CSVParser::var_col(size_t col_idx) {
             return 0.0;
         }
   }
-
 //MEDIAN
 double CSVParser::median_col(size_t col_idx) {
         
@@ -383,6 +382,7 @@ void CSVParser::summary(const string& filename){
             outFile<< "--------------------------------------------------------"<< endl;
 
        }
+       cout<<"Summary has been saved in "<< filename<<endl;
        outFile.close();
         }
    
@@ -471,6 +471,7 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
         if (found==false){
             outFile<<"There is no "<<wanted<< " in column "<<col_idx;
         }
+        cout<<"Results of classification of "<< wanted<< " has been saved in "<<filename<<endl;
                outFile.close();
         }
    
