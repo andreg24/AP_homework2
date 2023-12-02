@@ -3,28 +3,26 @@
 ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, double t_end, VectorXd y0) : fun(fun), t_start(t_start), t_end(t_end), y0(y0) {};
 
   pair<VectorXd, vector<VectorXd>> ODESolver::RK4(unsigned int n) {
-      double h = (t_end - t_start)/n; //step height. It is fixed
-      VectorXd t(n); //vector containing t values each step
-      t[0] = t_start; 
-      std::vector<VectorXd> Y; //vector containing the values of the solution in t[i] each step.
-      VectorXd y = y0; 
-      Y.push_back(y0);
+    double h = (t_end - t_start)/n; //step height. It is fixed
+    VectorXd t(n+1); //vector containing t values each step
+    t[0] = t_start; 
+    vector<VectorXd> Y; //vector containing the values of the solution in t[i] each step.
+    VectorXd y = y0; 
+    Y.push_back(y0);
 
-      for (unsigned int j=0; j<n; j++) {
-        //Runge Kutta increments 
-        VectorXd k1 = fun(t[j], y); 
-        VectorXd k2 = fun(t[j]+h/2.0, y+0.5*k1*h);
-        VectorXd k3 = fun(t[j]+h/2.0, y+0.5*k2*h);
-        VectorXd k4 = fun(t[j]+h, y+k3*h);
-        // t update
-        if (j!= n-1) {
-          t[j+1]=t[j]+h;
-        }
-        // y update using RK4 method 
-        y+=+h/6.0*(k1+2*k2+2*k3+k4);
-        Y.push_back(y);
-        }
-      pair<VectorXd, vector<VectorXd>> res;
+    for (unsigned int j=0; j<n; j++) {
+      //Runge Kutta increments 
+      VectorXd k1 = fun(t[j], y); 
+      VectorXd k2 = fun(t[j]+h/2.0, y+0.5*k1*h);
+      VectorXd k3 = fun(t[j]+h/2.0, y+0.5*k2*h);
+      VectorXd k4 = fun(t[j]+h, y+k3*h);
+      // t update
+      t[j+1]=t[j]+h;
+      // y update using RK4 method 
+      y+=+h/6.0*(k1+2*k2+2*k3+k4);
+      Y.push_back(y);
+      }
+    pair<VectorXd, vector<VectorXd>> res;
     res.first = t;
     res.second =Y;
     return res; 
@@ -72,8 +70,9 @@ ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, d
   }
 
   pair<VectorXd, vector<VectorXd>> ODESolver::midpoint(unsigned int n) {
+
     double h = (t_end - t_start) / n; //fixed step height
-    VectorXd t(n);
+    VectorXd t(n+1);
     t[0] = t_start;
     vector<VectorXd> Y;
     VectorXd y = y0;
@@ -82,9 +81,7 @@ ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, d
     for (unsigned int j = 0; j < n; j++) {
       VectorXd k1 = fun(t[j], y);
       VectorXd k2 = fun(t[j] + h / 2.0, y + 0.5 * h * k1);
-      if (j!= n-1) {
-        t[j+1]=t[j]+h;
-      }
+      t[j + 1]=t[j] + h;
       y += h * k2;
       Y.push_back(y);
     }
@@ -144,11 +141,8 @@ ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, d
 
     for (unsigned int j = 0; j < n; j++) {
       VectorXd k1 = fun(t[j], y);
-        t[j + 1] = t[j] + h;
-      
-      //cout << y<<endl;
+      t[j + 1] = t[j] + h;
       y += h * k1;
-      
       Y.push_back(y);
     }
 
@@ -198,86 +192,66 @@ ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, d
         double max_error = 0.0;
         vector<VectorXd>& Y = res.second;
         VectorXd& t = res.first;
-        //cout << Y.size()<<endl;
-        //cout << t.size()<<endl;
-        //cout<< t[0] << endl;
-        //cout << t[t.size()-1] << endl;
         for (unsigned int i = 0; i < t.size(); ++i) {
-            VectorXd y_analitic = analitic(t[i]); // Calcolo della soluzione analitica in t
-
-            VectorXd diff = Y[i] - y_analitic; // Differenza tra soluzione numerica e analitica
-
-            double error = diff.norm(); // Calcolo della norma dell'errore
-
-            max_error = std::max(max_error, error); // Aggiornamento dell'errore massimo
+            VectorXd y_analitic = analitic(t[i]); // analitic solution
+            VectorXd diff = Y[i] - y_analitic; // Difference between analitic and numerical solutions
+            double error = diff.norm(); // Error in each pass
+            max_error = std::max(max_error, error); // Update of the max error
         }
 
         return max_error;
     }
 
-    unsigned int ODESolver::convergence(pair<VectorXd, vector<VectorXd>>& res, function<VectorXd(double)> analitic) {
-        double h = (t_end - t_start)/res.second.size();
-        double accuracy = this->accuracy(res, analitic);
-        unsigned int C = 10;
-        double k = h;
-        unsigned int p = 0;
-        while (accuracy<C*k) {
-          k = k*k;
-          p+= 1;
-        }
-        return p;
-    };
-
-    void ODESolver::testEfficiency(string x, unsigned int n) {
-      if (x == "RK4") {
+  double ODESolver::efficiency(string x, unsigned int n) {
+    if (x == "RK4") { // efficiency for RK4 method
+      std::chrono::duration<double> sum; 
+      for (unsigned int i=0; i<5; i++) { // test RK4 5 times
+        auto start = std::chrono::high_resolution_clock::now();
+        RK4(n); 
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> time = end - start; // time for each computation of RK4
+        sum+= time; 
+      }
+      chrono::duration<double> a = sum/5; //mean of RK4 computations
+      return a.count();
+    }
+    else if (x == "midpoint") { // same procedure for midpoint
       std::chrono::duration<double> sum;
       for (unsigned int i=0; i<5; i++) {
         auto start = std::chrono::high_resolution_clock::now();
-        RK4(n); // O qualsiasi metodo che si desidera testare
+        midpoint(n); // 
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> time = end - start;
         sum+= time;
       }
       chrono::duration<double> a = sum/5;
-      std::cout << "Elapsed time: " << a.count() << "s\n";
+      return a.count();
       }
-      else if (x == "midpoint") {
+    else if (x == "euler") { // same procedure for euler
       std::chrono::duration<double> sum;
       for (unsigned int i=0; i<5; i++) {
         auto start = std::chrono::high_resolution_clock::now();
-        midpoint(n); // O qualsiasi metodo che si desidera testare
+        euler(n); 
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> time = end - start;
         sum+= time;
       }
       chrono::duration<double> a = sum/5;
-      std::cout << "Elapsed time: " << a.count() << "s\n";
+      return a.count();
       }
-      else if (x == "euler") {
-      std::chrono::duration<double> sum;
-      for (unsigned int i=0; i<5; i++) {
-        auto start = std::chrono::high_resolution_clock::now();
-        euler(n); // O qualsiasi metodo che si desidera testare
-        auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> time = end - start;
-        sum+= time;
-      }
-      chrono::duration<double> a = sum/5;
-      std::cout << "Elapsed time: " << a.count() << "s\n";
-      }
-      else {
-          throw invalid_argument("Invalid input for testEfficency. You have to choose between RK4, midpoint or euler!");
+      else { // 
+          throw invalid_argument("Invalid input for efficency. You have to choose between RK4, midpoint or euler!");
       }
     };
 
-  void ODESolver::testStability(string x, pair<VectorXd, vector<VectorXd>>& res){
-    VectorXd pert = VectorXd::Constant(res.second[0].size(), 0.01);
-    VectorXd y0_pert=res.second[0]+pert;
+  pair<double, double> ODESolver::stability(string x, pair<VectorXd, vector<VectorXd>>& res, double p){
+    VectorXd pert = VectorXd::Constant(res.second[0].size(), p);
+    VectorXd y0_pert=res.second[0]+pert; // initial value perturbed
 
-    unsigned int n=res.second.size();
-    ODESolver perturbed(fun,t_start,t_end,y0_pert);
-    // Calcola la soluzione con il metodo scelto
-    pair<VectorXd, vector<VectorXd>> res_pert;
+    unsigned int n=res.second.size(); // number of subintervals
+    // Compute the numerical solver with perturbed initial value
+    ODESolver perturbed(fun,t_start,t_end,y0_pert); 
+    pair<VectorXd, vector<VectorXd>> res_pert;  // Computer the numerical solution with the choosen initial value
 
       if (x == "RK4") {
           res_pert = perturbed.RK4(n);
@@ -286,22 +260,46 @@ ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, d
       } else if (x == "euler") {
           res_pert = perturbed.euler(n);
       } else {
-          // Gestione dell'errore nel caso x non sia nessuno dei valori previsti
+          throw invalid_argument("Invalid input for efficency. You have to choose between RK4, midpoint or euler! ");
       }
 
     double max_error = 0.0;
-    vector<VectorXd>& Y = res.second;
-    vector<VectorXd>& Y_pert=res_pert.second;
+    vector<VectorXd>& Y = res.second; // numerical solution of the original equation
+    vector<VectorXd>& Y_pert=res_pert.second; // numerical solution of the perturbed equation
         for (unsigned int i = 0; i < n; ++i) {
-
-            VectorXd diff = Y[i] - Y_pert[i]; // Differenza tra soluzione numerica e analitica
-
-            double error = diff.norm(); // Calcolo della norma dell'errore
-
-            max_error = std::max(max_error, error); // Aggiornamento dell'errore massimo
+            VectorXd diff = Y[i] - Y_pert[i]; // difference between the two solutions of the two equations
+            double error = diff.norm(); // norm of the error
+            max_error = std::max(max_error, error); // update max error
         }
-
-    cout<<"with a perturbation of the initial value of " << 0.01 << " the solution has a perturbation of " << max_error<<endl;
-
+    pair<double, double> stab; 
+    stab.first = p; // perturbation of initial value
+    stab.second = max_error; // perturbation of the solution
+    return stab;
     };
+
+  double ODESolver::convergence(pair<VectorXd, vector<VectorXd>>& res, function<VectorXd(double)> analytic_solution) {
+    unsigned int n = res.first.size();
+    double h = (t_end - t_start)/n;
+    VectorXd h_values(4); // we compute the solver with 4 differnt step height;
+    h_values << h, h/2, h/4, h/8; // halved steps
+
+    VectorXd errors(4); // vector containing max error for each h
+    for (int i = 0; i < h_values.size(); ++i) {
+      auto numerical_solution = euler((t_end - t_start) / h_values(i));
+
+      double max_error = accuracy(numerical_solution, analytic_solution); // max error
+      errors(i) = max_error;
+    }
+
+    VectorXd convergence_order(3); 
+    for (int i = 1; i < errors.size(); ++i) {
+      double order = log(errors(i - 1) / errors(i)) / log(2.0); // estimation of convergence error between two computation with two different h
+      convergence_order(i - 1) = order;
+
+    }
+    // Average convergence error
+    double avg_order = convergence_order.mean();
+    return avg_order;
+    }
+
     
