@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 project(Homework_2)
 
+add_compile_options(-std=c++17 -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-copy)
+
 # --COMPILE CSVPARSER SHARED LIBRARY--
 
 ### find Boost

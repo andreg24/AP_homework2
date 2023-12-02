@@ -34,31 +34,31 @@ public:
 	
 	// OPERATOR ()
 	//Access to a single element of the dataset through parentesis
-	const variant<optional <string>, optional<double>> operator()(const int row, const int col);
+	const variant<optional <string>, optional<double>> operator()(const int row, const int col) const;
 
 	//BASIC STATISTIC
 	//The following functions allow to do some basic statistical operations on specified column of the dataset
-	double mean_col(size_t col_idx);
-	double var_col(size_t col_idx);
-	double median_col(size_t col_idx);
-	double std_dev(size_t col_idx) ;
-	double covar(size_t col_idx1, size_t col_idx2);
-	double correlation_analysis(size_t col_idx1, size_t col_idx2);
+	double mean_col(const size_t col_idx) const;
+	double var_col(const size_t col_idx) const;
+	double median_col(const size_t col_idx) const;
+	double std_dev(const size_t col_idx) const;
+	double covar(const size_t col_idx1, const size_t col_idx2) const;
+	double correlation_analysis(size_t col_idx1, size_t col_idx2) const;
 
 	//FREQUENCY COUNT
 	//The function counts how many times each element appears in the specified column.
-    map<string, int> countFrequency(size_t col_idx);
+  map<string, int> countFrequency(const size_t col_idx) const;
 
 	//SUMMARY
 	//Compute frequency count for every element in every column. 
 	//Compute mean, median, standard deviation, correlation analisis for every column of double.
 	//Results saved in the specified file.
-	void summary(const string& filename);
+	void summary(const string& filename) const;
 
 	//CLASSIFICATON
 	//Search in the specified column for the wanted element.
 	//The function prints the corresponding rows in a .txt file
-	void classification(string wanted, size_t col_idx, const string& filename);
+	void classification(const string wanted, const size_t col_idx, const string& filename) const;
 
 
 	//ITERATOR CLASS
@@ -107,3 +107,5 @@ private:
 	vector<string> header;		//name of the columns
 	size_t size;					//number of column
 };
+
+#endif

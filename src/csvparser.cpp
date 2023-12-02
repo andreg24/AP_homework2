@@ -97,7 +97,7 @@ void CSVParser::read() {
 }
 
 //OPERATOR ()
-const variant<optional<string>, optional<double>> CSVParser::operator()(const int row, const int col) {
+const variant<optional<string>, optional<double>> CSVParser::operator()(const int row, const int col) const{
     const variant<vector<optional<string>>, vector<optional<double>>> column = dataset[col];
     variant<optional<string>, optional<double>> result;
     try {
@@ -109,7 +109,7 @@ const variant<optional<string>, optional<double>> CSVParser::operator()(const in
 }
 
 //MEAN
-double CSVParser::mean_col(size_t col_idx){
+double CSVParser::mean_col(const size_t col_idx) const {
 
         //checks on column index
         if (col_idx >= dataset.size()) {
@@ -144,7 +144,7 @@ double CSVParser::mean_col(size_t col_idx){
         }
 
 //VARIANCE
-double CSVParser::var_col(size_t col_idx) {
+double CSVParser::var_col(const size_t col_idx) const {
 
         //checks on column index
         if (col_idx >= dataset.size()) {
@@ -177,7 +177,7 @@ double CSVParser::var_col(size_t col_idx) {
         }
   }
 //MEDIAN
-double CSVParser::median_col(size_t col_idx) {
+double CSVParser::median_col(const size_t col_idx) const {
        
         //checks on column index
         if (col_idx >= dataset.size()) {
@@ -211,12 +211,12 @@ double CSVParser::median_col(size_t col_idx) {
   }
 
 //STANDARD DEVIATION
-double CSVParser::std_dev(size_t col_idx) {
+double CSVParser::std_dev(const size_t col_idx) const{
     return std::sqrt(var_col(col_idx));
   }
 
 //COVARIANCE
-double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
+double CSVParser::covar(const size_t col_idx1, const size_t col_idx2) const{
 
         //checks on column indexes
         if (col_idx1 >= size || col_idx2 >= size) {
@@ -251,7 +251,7 @@ double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
     }
 
 //CORRELATION ANALYSIS
-double CSVParser::correlation_analysis(size_t col_idx1, size_t col_idx2) {
+double CSVParser::correlation_analysis(const size_t col_idx1, const size_t col_idx2) const {
 
         //checks on columns indexes
         if (col_idx1 >= size || col_idx2 >= size ) {
@@ -272,7 +272,7 @@ double CSVParser::correlation_analysis(size_t col_idx1, size_t col_idx2) {
     }
 
 //FREQUENCY COUNT
-map<string, int> CSVParser::countFrequency(size_t col_idx) {
+map<string, int> CSVParser::countFrequency(const size_t col_idx) const{
     map<string, int> stringFrequencyMap;
 
         //checks on column index
@@ -323,7 +323,7 @@ map<string, int> CSVParser::countFrequency(size_t col_idx) {
 }
 
 //SUMMARY
-void CSVParser::summary(const string& filename){
+void CSVParser::summary(const string& filename) const{
     //open the desired file
     ofstream outFile(filename);
     if(outFile.is_open()){
@@ -385,7 +385,7 @@ void CSVParser::summary(const string& filename){
     };
 
 //CLASSIFICATION
-void CSVParser::classification(string wanted, size_t col_idx,const string& filename){
+void CSVParser::classification(const string wanted, const size_t col_idx, const string& filename) const{
        
         //checks on column index        
         if (col_idx >= dataset.size()) {
