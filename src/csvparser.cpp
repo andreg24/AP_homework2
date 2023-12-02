@@ -38,7 +38,6 @@ void CSVParser::read() {
 
 	ifstream file(input_file);
 	string line;
-	bool columns_allocated = false; // checks if columns vector have been allocated in dataset
 	unsigned int line_counter = 0; // number of row
 
   while (getline(file, line)) {
@@ -78,7 +77,6 @@ void CSVParser::read() {
 		else {
 			int counter = 0; // columns index counter
 			while (getline(lineStream, cell, ',')) {
-				//cout << cell.c_str() << endl;
 				// is a string column
 				if (holds_alternative<vector<optional<string>>>(dataset[counter])) {
 					optional<string> value;
@@ -113,8 +111,6 @@ variant<optional<string>, optional<double>> CSVParser::operator()(const int row,
 	try {
 		result = get<vector<optional<string>>>(column)[row];
 	} catch (bad_variant_access& e) {
-		//cout << "gotcha" << endl;<<<<<<<<<<<<<<<--------------------------
-        //<<<<<<<<<<<<<<<<<<<<<<<<<------------------------
 		result = get<vector<optional<double>>>(column)[row];
 	}
 	return result;
@@ -124,7 +120,7 @@ variant<optional<string>, optional<double>> CSVParser::operator()(const int row,
 double CSVParser::mean_col(size_t col_idx){
 
         //checks on column index
-		if (col_idx >= dataset.size() || col_idx < 0) {
+		if (col_idx >= dataset.size()) {
         throw out_of_range("Column index out of range.");
             return 0.0;}
 
@@ -159,7 +155,7 @@ double CSVParser::mean_col(size_t col_idx){
 double CSVParser::var_col(size_t col_idx) {
 
         //checks on column index
-        if (col_idx >= dataset.size() || col_idx < 0) {
+        if (col_idx >= dataset.size()) {
             throw out_of_range("Column index out of range.");
             return 0.0;
         }
@@ -192,7 +188,7 @@ double CSVParser::var_col(size_t col_idx) {
 double CSVParser::median_col(size_t col_idx) {
         
         //checks on column index
-        if (col_idx >= dataset.size() || col_idx < 0) {
+        if (col_idx >= dataset.size()) {
             throw out_of_range("Column index out of range.");
             return 0.0;
         }
@@ -231,7 +227,7 @@ double CSVParser::std_dev(size_t col_idx) {
 double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
 
         //checks on column indexes
-        if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
+        if (col_idx1 >= size || col_idx2 >= size) {
             throw out_of_range( "Column index out of range.");
             return 0.0;
         }
@@ -266,7 +262,7 @@ double CSVParser::covar(size_t col_idx1, size_t col_idx2) {
 double CSVParser::correlation_analysis(size_t col_idx1, size_t col_idx2) {
 
         //checks on columns indexes
-		if (col_idx1 >= size || col_idx1 < 0 || col_idx2 >= size || col_idx2 < 0) {
+		if (col_idx1 >= size || col_idx2 >= size ) {
             cerr << "Column index out of range." << endl;
             return 0.0;
         }
@@ -288,7 +284,7 @@ map<string, int> CSVParser::countFrequency(size_t col_idx) {
     map<string, int> stringFrequencyMap;
 
         //checks on column index
-        if (col_idx >= dataset.size() || col_idx < 0) {
+        if (col_idx >= dataset.size()) {
             throw out_of_range("Column index out of range.");
             return stringFrequencyMap;
         }
@@ -326,7 +322,6 @@ map<string, int> CSVParser::countFrequency(size_t col_idx) {
             //fill the frequency map
             for (const auto& cell : numeric_column) {
                 if (cell.has_value()) {
-                    double value = cell.value();
                     stringFrequencyMap[to_string(cell.value())]++;
                 }
             }
@@ -345,18 +340,21 @@ void CSVParser::summary(const string& filename){
 
             //if dataset[col_idx] is a column of double
             if (holds_alternative<std::vector<optional<double>>>(dataset[i])){
-               const auto& double_column = get<vector<optional<double>>>(dataset[i]);
-
+               
                //compute statistical operations
-               outFile << "Column " << header[i] << ": Mean = " << mean_col(i) 
+               outFile<<"\n"<<"-------------------------------------------------------------"<<"\n"
+                      <<"Column " << header[i] << ":"<<"\n"
+                      <<"-------------------------------------------------------------"<<"\n"<<"\n"
+                      <<"Mean = " << mean_col(i) 
                       << ", Median = " << median_col(i) 
                       << ", Std Dev = " << std_dev(i) 
-                      << ", Variance = " << var_col(i) << "\n";
+                      << ", Variance = " << var_col(i) << "\n"<<"\n";
                 map<string, int> freq = countFrequency(i);
+                outFile<<"Frequency count of all the element in the column"<<"\n";
                 for (const auto& pair : freq) {
                     outFile << " Element:  " << pair.first << " Frequency: " << pair.second << endl;
                 }
-                outFile << "Correlation with other numeric columns:" << endl;
+                outFile <<"\n"<< "Correlation with other numeric columns:" << endl;
                 for (size_t j = 0; j < dataset.size(); ++j) {
                     if (j != i &&
                         holds_alternative<vector<optional<double>>>(dataset[j])) {
@@ -372,14 +370,17 @@ void CSVParser::summary(const string& filename){
            }
            else {
             //if dataset[col_idx] is a column of string
-                outFile << "Column " << header[i] << ": non numeric column"<<"\n";
+                outFile <<"\n"<<"-------------------------------------------------------------"<<"\n"
+                      <<"Column " << header[i] << ":"<<"\n"
+                      <<"-------------------------------------------------------------"<<"\n"<<"\n"
+                      << "Non numeric column"<<"\n"<<"\n";
                 //compute frequency count
                 map<string, int> freq = countFrequency(i);
                 for (const auto& pair : freq) {
                     outFile << " Element:  " << pair.first << " Frequency: " << pair.second<<endl;
                 }
             }
-            outFile<< "--------------------------------------------------------"<< endl;
+            
 
        }
        cout<<"Summary has been saved in "<< filename<<endl;
@@ -392,10 +393,10 @@ void CSVParser::summary(const string& filename){
     };
 
 //CLASSIFICATION
-void CSVParser::classification(string wanted, int col_idx,const string& filename){
+void CSVParser::classification(string wanted, size_t col_idx,const string& filename){
         
         //checks on column index        
-        if (col_idx >= dataset.size() || col_idx < 0) {
+        if (col_idx >= dataset.size()) {
             throw out_of_range("Column index out of range.");
         }
 
@@ -483,3 +484,5 @@ void CSVParser::classification(string wanted, int col_idx,const string& filename
        throw runtime_error("unable to open the file");
    }
     };
+      
+        
