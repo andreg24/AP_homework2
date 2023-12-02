@@ -54,7 +54,7 @@ public:
 	//CLASSIFICATON
 	//Search in the specified column for the wanted element.
 	//The function prints the corresponding rows in a .txt file
-	void classification(string wanted, int col_idx, const string& filename);
+	void classification(string wanted, size_t col_idx, const string& filename);
 
 
 	//ITERATOR CLASS
@@ -101,5 +101,5 @@ private:
 	string input_file;			//csv file
 	vector<variant<vector<optional<string>>, vector<optional<double>>>> dataset;
 	vector<string> header;		//name of the columns
-	int size;					//number of column
+	size_t size;					//number of column
 };
