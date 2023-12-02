@@ -1,12 +1,17 @@
-GROUP MEMBERS:
+# GROUP MEMBERS
 Sara Carpenè – saracarpene01@gmail.com
 Davide De Dominicis – dedominicis2001@gmail.com
 Andrea Gottardi – andreagottardi24@gmail.com 
 
-CODE ORGANIZATION:
+# CODE ORGANIZATION
 We choose to implement these two modules: statistical module and ODE module.
 
-STATISTICAL MODULE:
+# STRUCTURE
+- folder csv_examples contains some csv files to use in testing csvparser
+- folder src contains the csvparser and odesolver code
+- folder apps contains the main files that showcase the functioning of the two modules’ libraries.
+
+# STATISTICAL MODULE
 This module takes as command line argument a csv file.
 We decided to implement the CSVParser as a class. We store as private members the dataset, the header (that contains the name of the columns) and the size of the dataset (that corresponds to the numbers of columns).
 We decided to use the Boost library to perform the statistical operations.
@@ -26,7 +31,7 @@ There are two more methods:
  
 Moreover, we implemented the Iterator class that allows to smoothly iterate through the columns of the dataset (built on top of the std vector iterator).
 
-ODE MODULE:
+# ODE MODULE
 The ODEsolver class in the module represents a Cauchy problem. Its creation requires specifying the differential equation to be solved, the initial point, and the interval in which the solution has to be calculated.
 We used the third part library Eigen to perform operations with vectors.
 
@@ -42,8 +47,14 @@ The other functions allow testing the goodness of fit of numerical methods
 	-Convergence: This function compares numerical solutions obtained by different steps, returning the mean of the differences between the solutions and the 	exact solution. We used the following formula in order to approximate the order of convergency:
 	\frac{\log{||e_n-e_{n-1}||}}{\log{||e_{n-1}-e_{n-2}||}}
 
+# INSTALL AND TEST
+To create the shared libraries (csvparser.so and odesolver.so), compile maincsv and mainode and link them with the libraries, execute the command *./projbuild.sh /path/to/boost path/to/eigen3*
+The result will be saved in a build directory inside the main project directory.
 
-INDIVIDUAL CONTRIBUTIONS:
-Statistical module: everyone contributed equally the implementation of this module, working simultaneously on the same function.
-ODE module: design and implementation Davide and Sara
-CMake and library management: Andrea
+To test the executables on a predetermined example execute *./testbuild.sh*. In order to change the dataset on which the csvparser is made is necessary to modify the given dataset in the testbuild.sh file or execute the command *./maincsv datasetname.csv outputfile_name.
+
+
+# INDIVIDUAL CONTRIBUTIONS
+Statistical module: all the members of the group contributed equally to the design and implementation of the module
+ODE module: design and implementation realized equally by Carpenè and De Dominicis
+Porject management: libraries management, cmake files and bash scripts done by Gottardi
