@@ -28,12 +28,12 @@ ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, d
     return res; 
   }
 
-  void ODESolver::RK4_csv(unsigned int n) {
+  void ODESolver::RK4_csv(unsigned int n,string filename) {
        double h = (t_end - t_start)/n; //fixed step height
        double t = t_start;       
        VectorXd y = y0;
        std::ofstream myfile;
-      myfile.open("resultsRK4.csv"); //Opening the file in which we are going to write the results
+      myfile.open(filename); //Opening the file in which we are going to write the results
       if (myfile.is_open()) {
 
         //header of the csv
@@ -91,13 +91,13 @@ ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, d
     return res;
    }
 
-  void ODESolver::midpoint_csv(unsigned int n) {
+  void ODESolver::midpoint_csv(unsigned int n,string filename) {
     double h = (t_end - t_start) / n;
     double t = t_start;
     VectorXd y = y0;
 
     std::ofstream myfile;
-    myfile.open("results_midpoint.csv");
+    myfile.open(filename);
     if (myfile.is_open()) {
       myfile << "t" <<" , ";
       for (unsigned int i=0; i<y.size()-1; i++) {
@@ -152,13 +152,13 @@ ODESolver::ODESolver(function<VectorXd(double, VectorXd)> fun, double t_start, d
     return res;
   }
 
-  void ODESolver::euler_csv(unsigned int n) {
+  void ODESolver::euler_csv(unsigned int n,string filename) {
     double h = (t_end - t_start) / n;
     double t = t_start;
     VectorXd y = y0;
 
     std::ofstream myfile;
-    myfile.open("results_euler.csv");
+    myfile.open(filename);
     if (myfile.is_open()) {
       myfile << "t" << " , ";
       for (unsigned int i = 0; i < y.size() - 1; i++) {
