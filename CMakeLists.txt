@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.12)
-project(Homework 2)
+project(Homework_2)
 
 
 # --COMPILE THE CSVPARSER SHARED LIBRARY--
 
 
-#set(BOOST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../proj/extlib)
+set(BOOST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../proj/extlib)
 
 # Find the Boost components you need
 find_package(Boost 1.82.0 REQUIRED)
 if(Boost_FOUND)
     message("Boost found")
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../proj/extlib/boost/include)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../proj/extlib/boost/include)
     #include_directories(${BOOST_ROOT}/boost/include)
 else()
     message(FATAL_ERROR "Boost not found")
@@ -30,7 +30,7 @@ target_link_libraries(csvparser PRIVATE ${Boost_LIBRARIES})
 
 # --COMPILE ODESOLVER SHARED LIBRARY--
 
-find_package(Eigen3 Required)
+find_package(Eigen3 REQUIRED)
 
 add_library(odesolver SHARED src/odesolver.hpp src/odesolver.cpp)
 
@@ -40,7 +40,13 @@ target_include_directories(odesolver PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src ${EI
 
 
 # Build the executable using another_file.cpp
-add_executable(main apps/main.cpp)
+add_executable(maincsv apps/maincsv.cpp)
 
 # Link against the main library
-target_link_libraries(main PRIVATE csvparser odesolver)
+target_link_libraries(maincsv PRIVATE csvparser)
+
+add_executable(mainode apps/mainode.cpp)
+
+# Link against the main library
+target_link_libraries(mainode PRIVATE odesolver)
+
