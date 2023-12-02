@@ -8,11 +8,13 @@
 #include <optional>
 #include <map>
 #include <vector>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics.hpp>
 #include <boost/accumulators/statistics/median.hpp>
 #include <boost/accumulators/statistics/covariance.hpp>
-
+#pragma GCC diagnostic pop
 
 using namespace std;
 using namespace boost::accumulators;
