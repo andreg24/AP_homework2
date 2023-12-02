@@ -20,6 +20,7 @@
 #include <boost/accumulators/statistics/covariance.hpp>
 #pragma GCC diagnostic pop
 
+
 using namespace std;
 using namespace boost::accumulators;
 
@@ -30,14 +31,10 @@ public:
 
 	//PARSER function
 	void read();
-
-	//Get the dataset from the class
-	//vector<variant<vector<optional <string>>, vector<optional<double>>>> getDataset() { return dataset; }
-	/////////////////////////////////SERVE????????????????????????????????
 	
 	// OPERATOR ()
 	//Access to a single element of the dataset through parentesis
-	variant<optional <string>, optional<double>> operator()(const int row, const int col);
+	const variant<optional <string>, optional<double>> operator()(const int row, const int col);
 
 	//BASIC STATISTIC
 	//The following functions allow to do some basic statistical operations on specified column of the dataset
@@ -105,10 +102,8 @@ public:
 	
 
 private:
-	string input_file;			//csv file
+	const string input_file;			//csv file
 	vector<variant<vector<optional<string>>, vector<optional<double>>>> dataset;
 	vector<string> header;		//name of the columns
 	size_t size;					//number of column
 };
-
-#endif
