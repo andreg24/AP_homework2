@@ -56,5 +56,5 @@ To test the executables on a predetermined example execute *./testbuild.sh*. In 
 
 # INDIVIDUAL CONTRIBUTIONS
 - Statistical module: all the members of the group contributed equally to the design and implementation of the module
-- ODE module: design and implementation realized equally by Carpenè and De Dominicis
-- Project management: libraries management, cmake files and bash scripts done by Gottardi
+- ODE module: design and implementation of the module realized equally by Carpenè and De Dominicis
+- Project management: libraries management, cmake files and bash scripts realized by Gottardi
