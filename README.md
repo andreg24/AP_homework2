@@ -18,9 +18,7 @@ We decided to use the Boost library to perform the statistical operations.
 The main creates a member of the class CSVParser, and, when called the function read() , the data in the csv file are stored in “dataset”.
 Dataset is a private member of the “CSVParser”, it is a two dimensional vector that store information in columns. Every column is homogeneous and can be composed of double or string. It can handle missing values by the use of std:: optional.
 For the columns these operations can be performed:
-
 	-Double columns: mean, variance, median, standard deviation, covariance between two double columns, correlation analysis between two columns, frequency 	count.
- 
 	-String columns: frequency count.
  
 There are two more methods:
