@@ -6,7 +6,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
-#include "./eigen/Eigen/Dense"
+#include "../../eigen/Eigen/Dense"
 #include <chrono>
 
 using namespace Eigen;
@@ -27,19 +27,19 @@ public:
     pair<VectorXd, vector<VectorXd>> RK4(unsigned int n);
 
     //Variation of RK4 that saves the results into a csv
-    void RK4_csv(unsigned int n);
+    void RK4_csv(unsigned int n, string filename);
 
     //Midpoint method for solving ODEs
     pair<VectorXd, vector<VectorXd>> midpoint(unsigned int n);
 
     //Variation of midpoint method that saves the results into a csv
-    void midpoint_csv(unsigned int n);
+    void midpoint_csv(unsigned int n, string filename);
 
     // Forward Euler methord for solving ODEs
     pair<VectorXd, vector<VectorXd>> euler(unsigned int n);
 
     // Variation of euler method that saves the results into a csv
-    void euler_csv(unsigned int n);
+    void euler_csv(unsigned int n,string filename);
 
     // Accuracy
     double accuracy(pair<VectorXd, vector<VectorXd>>& res, function<VectorXd(double)> analitic);
