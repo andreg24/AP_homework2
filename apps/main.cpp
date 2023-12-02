@@ -1,16 +1,23 @@
 #include "csvparser.hpp"
 
-int main() {
-/*
-CSVParser A("top_english_movies.csv");
-A.read();
+int main(int argc, char* argv[]) {
+   // Check if the correct number of arguments is provided
+   if (argc != 3) {
+       std::cerr << "Usage: " << argv[0] << " <input_file> <output_file>\n";
+       return 1;
+   }
 
-string filename= "top_english_movies.txt";
+   // Parse input and output filenames from command line arguments
+   std::string input_file = argv[1];
+   std::string output_file = argv[2];
 
-A.summary(filename);
+   // Create an instance of CSVParser
+   CSVParser parser(input_file);
 
-string classificationfile="1993.txt";
-A.classification("1993", 2, classificationfile);
-return 0;
-*/
+   // Perform operations
+   parser.read();
+   parser.summary(output_file);
+   string classificationfile="classificationresults.csv";
+   parser.classification("Iris-setosa", 5, classificationfile);
+   return 0;
 }
