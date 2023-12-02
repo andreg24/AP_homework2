@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -shared -Wl,-soname,libodesolver.so -o libodesolver.so CMakeFiles/odesolver.dir/odesolver.cpp.o 
