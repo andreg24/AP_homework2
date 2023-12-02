@@ -1,3 +1,6 @@
+#ifndef CSVPARSER_HPP_
+#define CSVPARSER_HPP_
+
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -8,6 +11,7 @@
 #include <optional>
 #include <map>
 #include <vector>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <boost/accumulators/accumulators.hpp>
@@ -28,7 +32,7 @@ public:
 	void read();
 
 	//Get the dataset from the class
-	vector<variant<vector<optional <string>>, vector<optional<double>>>> getDataset() { return dataset; }
+	//vector<variant<vector<optional <string>>, vector<optional<double>>>> getDataset() { return dataset; }
 	/////////////////////////////////SERVE????????????????????????????????
 	
 	// OPERATOR ()
@@ -106,3 +110,5 @@ private:
 	vector<string> header;		//name of the columns
 	size_t size;					//number of column
 };
+
+#endif
