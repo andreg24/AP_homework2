@@ -32,12 +32,11 @@ The ODEsolver class in the module represents a Cauchy problem. Its creation requ
 We used the third part library Eigen to perform operations with vectors.
 
 The methods implemented to solve the Cauchy problem are: Runge Kutta 4, Euler's method, and the midpoint method. Each of these methods is implemented into two functions, the first one with the name of the method and the second one with csv. The first returns an object in which the different t_n and y1, y2, y3, ... are stored, for later use in any other computation. The second function prints the results in a .csv file.
-The other functions allow testing the goodness of fit of numerical methods
-- Accuracy: This function compares the solution found by the numerical method and the analytical solution by taking the infinite norm of the difference 		between the two values
-- Efficiency: This function tests the speed of execution of the method (to obtain more accurate estimate of the computation time we decided to execute the 	method five times and return the mean of the results).
-- Stability: This function returns by how much the solution is perturbed if the initial value of the Cauchy problem is perturbed.
-- Convergence: This function compares numerical solutions obtained by different steps, returning the mean of the differences between the solutions and the 	exact solution. We used the following formula in order to approximate the order of convergency:
-	\frac{\log{||e_n-e_{n-1}||}}{\log{||e_{n-1}-e_{n-2}||}}
+The other functions allow testing the goodness of fit of numerical methods:
+- Accuracy: This function compares the solution found by the numerical method and the analytical solution by taking the infinite norm of the difference between the two values. It takes as an input the result “res” of one of the previous solver method, and the analytical solution of the Cauchy problem.
+- Efficiency: This function tests the speed of execution of the method (to obtain more accurate estimate of the computation time we decided to execute the method five times and return the mean of the results). It takes as an input a string (RK4, euler, midpoint) that indicates the method for which you want to test the efficiency and the number of subdivisions n.
+- Stability: This function returns by how much the solution is perturbed if the initial value of the Cauchy problem is perturbed. It takes as input a string that indicates the method for which you want to test the stability and the result “res” of the method. Important: the result must the obtained with the same method declared in the string. It has been done to avoid computing it again if the user already called the method.
+- Convergence: This function compares numerical solutions obtained by different steps, returning the mean of the differences between the solutions and the exact solution, according to the mathematical formula. It takes as an input the result “res” of one of the previous solver method, and the analytical solution of the Cauchy problem.
 
 
 **Concise discussion of the obtained results:**
