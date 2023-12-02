@@ -39,6 +39,12 @@ The other functions allow testing the goodness of fit of numerical methods
 - Convergence: This function compares numerical solutions obtained by different steps, returning the mean of the differences between the solutions and the 	exact solution. We used the following formula in order to approximate the order of convergency:
 	\frac{\log{||e_n-e_{n-1}||}}{\log{||e_{n-1}-e_{n-2}||}}
 
+
+**Concise discussion of the obtained results:**
+  A good numerical method for solving ODE is accurate, efficient, stabile and has a high order of convergence (2 is high in term of convergence).
+  Regarding the result of our function you want the output of accuracy to be small (since it represent the error of the numerical solution with respect to the analytic one), the output of efficiency to be as small as possible, and you want that the output of stability has at least a comparable order of magnitude with the one of the perturbation. Regarding convergence you may expect results between 0 and 2, where the higher the value the better is the method for solving the problem.
+  With respect to our result we can observe that the methods are good on the one dimensional problem, and quite bad for the two dimensional one, maybe we are in a problem of stiffness.
+
 # INSTALL AND TEST
 To create the shared libraries (csvparser.so and odesolver.so), compile maincsv and mainode and link them with the libraries, execute the command *./projbuild.sh /path/to/boost path/to/eigen3*. It is requested the version 1.82.0 of Boost. The boost installation folder must contain a boost folder, which contains an include folder.
 The result will be saved in a build directory inside the main project directory.
