@@ -40,7 +40,7 @@ The other functions allow testing the goodness of fit of numerical methods
 	\frac{\log{||e_n-e_{n-1}||}}{\log{||e_{n-1}-e_{n-2}||}}
 
 # INSTALL AND TEST
-To create the shared libraries (csvparser.so and odesolver.so), compile maincsv and mainode and link them with the libraries, execute the command *./projbuild.sh /path/to/boost path/to/eigen3*
+To create the shared libraries (csvparser.so and odesolver.so), compile maincsv and mainode and link them with the libraries, execute the command *./projbuild.sh /path/to/boost path/to/eigen3*. It is requested the version 1.82.0 of Boost. The boost installation folder must contain a boost folder, which contains an include folder.
 The result will be saved in a build directory inside the main project directory.
 
 To test the executables on a predetermined example execute *./testbuild.sh*. In order to change the dataset on which maincsv is executed is necessary to modify the given dataset in the testbuild.sh file or execute the command *./maincsv datasetname.csv outputfile_name.
