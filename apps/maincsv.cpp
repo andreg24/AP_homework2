@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
    // Perform operations
    parser.read();
    parser.summary(output_file);
-   string classificationfile="classificationresults.csv";
+   string classificationfile="classificationresults.txt";
    parser.classification("Iris-setosa", 5, classificationfile);
    return 0;
 }
