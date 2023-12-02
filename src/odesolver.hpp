@@ -6,7 +6,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
-#include "Eigen/Dense"
+#include "./eigen/Eigen/Dense"
 #include <chrono>
 
 using namespace Eigen;
@@ -44,49 +44,15 @@ public:
     // Accuracy
     double accuracy(pair<VectorXd, vector<VectorXd>>& res, function<VectorXd(double)> analitic);
 
-    //Convergence
-    unsigned int convergence(pair<VectorXd, vector<VectorXd>>& res, function<VectorXd(double)> analitic);
-
     //Efficiency
-    void testEfficiency(string x, unsigned int n);
+    double efficiency(string x, unsigned int n);
 
     //Stability
-    void testStability(string x, pair<VectorXd, vector<VectorXd>>& res);
+    pair<double, double> stability(string x, pair<VectorXd, vector<VectorXd>>& res, double p);
 
-
-    pair<double, double> convergence2(pair<VectorXd, vector<VectorXd>>& res, function<VectorXd(double)> analytic_solution) {
-        unsigned int n = res.first.size();
-        double h = (t_end - t_start)/n;
-        VectorXd h_values(4); // Valori di h per la discretizzazione
-        h_values << h, h/2, h/4, h/8;
-
-        VectorXd errors(4); // Contiene gli errori massimi per ogni h
-        for (int i = 0; i < h_values.size(); ++i) {
-            auto numerical_solution = euler((t_end - t_start) / h_values(i));
-
-            double max_error = accuracy(numerical_solution, analytic_solution); // Calcola l'errore massimo
-            errors(i) = max_error;
-        }
-
-        // Calcola l'ordine di convergenza
-        VectorXd convergence_order(3);
-        for (int i = 1; i < errors.size(); ++i) {
-            double order = log(errors(i - 1) / errors(i)) / log(2.0); // Formula per l'ordine di convergenza
-            convergence_order(i - 1) = order;
-
-        }
-        /*for (auto elem : convergence_order) {
-          cout<<" ciao "<< elem << " ciao "<<endl;
-        }*/
+    //Convergence
+    double convergence(pair<VectorXd, vector<VectorXd>>& res, function<VectorXd(double)> analytic_solution);
  
-        // Calcola l'ordine di convergenza medio
-        double avg_order = convergence_order.mean();
-
-        // Restituisce l'errore più piccolo e l'ordine di convergenza medio
-        return make_pair(errors.maxCoeff(), avg_order);
-    }
-
-    
 };
 
 
