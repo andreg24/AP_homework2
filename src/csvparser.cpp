@@ -17,13 +17,6 @@ bool check_conversion(const string& cell) {
     else { return false; }
 }
 
-void print_vector(const vector<string>& vect) {
-    for (unsigned int i=0; i<vect.size(); ++i) {
-        cout << vect[i] << ", ";
-    }
-    cout << endl;
-}
-
 //------------------------------------------------------------
 
 //CONSTRUCTOR
@@ -104,8 +97,8 @@ void CSVParser::read() {
 }
 
 //OPERATOR ()
-variant<optional<string>, optional<double>> CSVParser::operator()(const int row, const int col) {
-    variant<vector<optional<string>>, vector<optional<double>>> column = dataset[col];
+const variant<optional<string>, optional<double>> CSVParser::operator()(const int row, const int col) {
+    const variant<vector<optional<string>>, vector<optional<double>>> column = dataset[col];
     variant<optional<string>, optional<double>> result;
     try {
         result = get<vector<optional<string>>>(column)[row];
