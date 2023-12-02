@@ -6,7 +6,7 @@ set -x # print commands executed
 cd src
 mkdir csvparser
 cd csvparser
-cmake -DLIB_TO_COMPILE="csvparser" ..
+cmake -D
 make
 
 # compile odesolver as shared library
