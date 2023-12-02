@@ -1,12 +1,11 @@
 #ifndef ODESOLVER_HPP_
-#define ODESOLVER_HPP
+#define ODESOLVER_HPP_
 
 #include <iostream>
 #include <functional>
 #include <cmath>
 #include <fstream>
 #include <vector>
-//#include "../../eigen/Eigen/Dense"
 #include "Eigen/Dense"
 #include <chrono>
 
