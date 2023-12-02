@@ -51,10 +51,10 @@ The other functions allow testing the goodness of fit of numerical methods
 To create the shared libraries (csvparser.so and odesolver.so), compile maincsv and mainode and link them with the libraries, execute the command *./projbuild.sh /path/to/boost path/to/eigen3*
 The result will be saved in a build directory inside the main project directory.
 
-To test the executables on a predetermined example execute *./testbuild.sh*. In order to change the dataset on which the csvparser is made is necessary to modify the given dataset in the testbuild.sh file or execute the command *./maincsv datasetname.csv outputfile_name.
+To test the executables on a predetermined example execute *./testbuild.sh*. In order to change the dataset on which maincsv is executed is necessary to modify the given dataset in the testbuild.sh file or execute the command *./maincsv datasetname.csv outputfile_name.
 
 
 # INDIVIDUAL CONTRIBUTIONS
-Statistical module: all the members of the group contributed equally to the design and implementation of the module
-ODE module: design and implementation realized equally by Carpenè and De Dominicis
-Porject management: libraries management, cmake files and bash scripts done by Gottardi
+- Statistical module: all the members of the group contributed equally to the design and implementation of the module
+- ODE module: design and implementation realized equally by Carpenè and De Dominicis
+- Project management: libraries management, cmake files and bash scripts done by Gottardi
